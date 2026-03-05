@@ -393,3 +393,5 @@ import { helper } from "./utils";
 - **`strict: true`**: TypeScriptの全strictオプション有効
 - **barrel exports**: 各スライス/モジュールは `index.ts` でPublic APIを公開
 - **副作用の分離**: 純粋関数とI/O関数を明確に分離
+- **パッケージマネージャ**: bun を使用
+- **ライブラリは最新版を使用**: インストール時は常に最新の安定版を指定する
