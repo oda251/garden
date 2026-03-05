@@ -345,7 +345,7 @@ import { helper } from "./utils";
 | ユニットテスト | `packages/validation/` | バリデーションルールの検証 |
 | ユニットテスト | `backend/middleware/` | 認証・エラーハンドリングの検証 |
 | e2e | `backend/` | APIエンドポイントの結合テスト |
-| e2e | `frontend/` | ユーザーフローのE2Eテスト |
+| e2e | `frontend/` | ユーザーフローのE2Eテスト (Playwright) |
 
 ---
 
