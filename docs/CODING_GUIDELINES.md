@@ -51,49 +51,62 @@ backend/
 
 ```
 packages/
-├── models/            # Zodスキーマによるモデル定義 (Source of Truth)
+├── schema/            # Drizzleテーブル定義 (Source of Truth)
+├── models/            # drizzle-zodで生成したZodスキーマ + 型
 ├── dto/               # モデルから派生するDTO定義
 └── validation/        # バリデーションルール (refine, superRefine)
 ```
 
-- **Zodスキーマが唯一の型定義元 (Single Source of Truth)**
-- TypeScript型は `z.infer<typeof schema>` で導出する
-- DTOはモデルスキーマを `.pick()`, `.omit()`, `.extend()` 等で加工して生成
+- **Drizzleテーブル定義が唯一の型定義元 (Single Source of Truth)**
+- `drizzle-zod` の `createSelectSchema` / `createInsertSchema` でZodスキーマを導出
+- DTOはZodスキーマを `.pick()`, `.omit()`, `.extend()` 等で加工して生成
 - `refine` / `superRefine` によるバリデーションルールもここで一元管理
 - フロントエンド・バックエンド両方からこのパッケージを参照する
 
 ```typescript
-// packages/models/node.ts
-import { z } from "zod";
+// packages/schema/node.ts  — SoT (Drizzleテーブル定義)
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const NodeSchema = z.object({
-  id: z.string().ulid(),
-  parentId: z.string().ulid().nullable(),
-  title: z.string().min(1).max(200),
-  content: z.string(),
-  createdBy: z.string().ulid(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+export const nodes = sqliteTable("nodes", {
+  id: text("id").primaryKey(),
+  parentId: text("parent_id").references(() => nodes.id),
+  title: text("title").notNull(),
+  content: text("content").notNull().default(""),
+  createdBy: text("created_by").notNull(),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
 });
-
-export type Node = z.infer<typeof NodeSchema>;
 ```
 
 ```typescript
-// packages/dto/node.ts
-import { NodeSchema } from "../models/node";
+// packages/models/node.ts  — drizzle-zodでZodスキーマを導出
+import { createSelectSchema, createInsertSchema } from "drizzle-zod";
+import { nodes } from "../schema/node";
 
-export const CreateNodeDto = NodeSchema.pick({
+// Selectスキーマ (DB→アプリ方向のバリデーション)
+export const NodeSchema = createSelectSchema(nodes);
+export type Node = typeof NodeSchema._type;
+
+// Insertスキーマ (アプリ→DB方向のバリデーション)
+export const InsertNodeSchema = createInsertSchema(nodes);
+export type InsertNode = typeof InsertNodeSchema._type;
+```
+
+```typescript
+// packages/dto/node.ts  — DTOはZodスキーマから派生
+import { InsertNodeSchema } from "../models/node";
+
+export const CreateNodeDto = InsertNodeSchema.pick({
   title: true,
   content: true,
   parentId: true,
 });
 
-export type CreateNodeDto = z.infer<typeof CreateNodeDto>;
+export type CreateNodeDto = typeof CreateNodeDto._type;
 ```
 
 ```typescript
-// packages/validation/node.ts
+// packages/validation/node.ts  — refine/superRefine をここで登録
 import { CreateNodeDto } from "../dto/node";
 
 export const CreateNodeDtoValidated = CreateNodeDto.superRefine(
@@ -111,7 +124,7 @@ export const CreateNodeDtoValidated = CreateNodeDto.superRefine(
 
 ライブラリ境界 (Better Auth設定、Hono拡張等) を除き、**クラスの使用を禁止**する。
 
-- データ構造: Zodスキーマ + 型推論
+- データ構造: Drizzleテーブル定義 → drizzle-zod → 型推論
 - ロジックのまとまり: コンパニオンパターン (後述)
 - 状態管理: React hooks / 関数ベースのストア
 

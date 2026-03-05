@@ -11,6 +11,7 @@
 | バックエンド | Hono (Cloudflare Workers) |
 | フロントエンド | React Router |
 | データベース | Cloudflare D1 (SQLite) |
+| ORM | Drizzle ORM + drizzle-zod |
 | 認証 | Better Auth |
 | デプロイ | Cloudflare |
 
