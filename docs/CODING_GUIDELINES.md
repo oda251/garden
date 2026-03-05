@@ -34,6 +34,7 @@ frontend/
 - 状態管理: React Router の loader/action + URL params + cookies を優先。クライアントのみの高頻度更新状態 (グラフ操作等) は Zustand を最小限で使用
 - フォーム: React Hook Form + `@hookform/resolvers/zod` で packages/dto/ の Zod スキーマをバリデーションに使用
 - グラフ描画: React Flow (ノード操作・ズーム/パン/ドラッグ組み込み)
+- キャッシュ: tRPC (TanStack Query) のクエリキャッシュで不要なリクエストを抑制
 
 ### バックエンド — Hono + tRPC, Functional Core, Imperative Shell
 
@@ -51,6 +52,8 @@ backend/
 - tRPC: API層 (`/trpc/*` にマウント、クライアントから型安全に呼び出し)
 
 依存方向: `router → usecases → domain ← adapters`、`middleware → domain`
+
+- キャッシュ: Cloudflare Cache API でD1クエリ結果をエッジキャッシュ (無料、TTL は Cache-Control で制御)
 
 ### packages/ — 共有定義
 
