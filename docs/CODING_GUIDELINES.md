@@ -275,9 +275,21 @@ app.onError((err, c) => {
 |--------|--------|
 | クラス宣言の完全禁止 | `no-extraneous-class` で部分カバー + レビュー |
 | `try-catch` のルート以外での使用禁止 | レビュー |
-| FSD レイヤー間の依存方向 | `import/no-cycle` + レビュー |
+| FSD レイヤー間の依存方向 | dependency-cruiser |
 
 > oxlint が将来 `no-restricted-syntax` をサポートした際に移行する。
+
+### 依存方向の強制 — dependency-cruiser
+
+バックエンド・フロントエンド両方のレイヤー間依存ルールを静的に検証する。
+
+```bash
+npx depcruise --config .dependency-cruiser.cjs backend/ frontend/
+```
+
+- `--cache` でキャッシュ有効化 (2回目以降高速)
+- `tsPreCompilationDeps: true` でTS直接解析
+- CI または pre-commit で実行
 
 ### Formatter — oxfmt
 
