@@ -7,7 +7,7 @@
 ```
 garden/
 ├── frontend/          # React Router (FSD)
-├── backend/           # Hono on Cloudflare Workers (Functional Core, Imperative Shell)
+├── backend/           # Hono + tRPC on Cloudflare Workers (Functional Core, Imperative Shell)
 ├── packages/          # 共有パッケージ (モデル・DTO・バリデーション)
 ├── infra/             # Terraform (Cloudflare + GitHub)
 ├── .github/workflows/ # CI/CD (GitHub Actions)
@@ -33,18 +33,22 @@ frontend/
 - 各スライスは `index.ts` で公開APIを定義 (Public API パターン)
 - 状態管理: React Router の loader/action + URL params + cookies を優先。クライアントのみの高頻度更新状態 (グラフ操作等) は Zustand を最小限で使用
 
-### バックエンド — Functional Core, Imperative Shell
+### バックエンド — Hono + tRPC, Functional Core, Imperative Shell
 
 ```
 backend/
-├── routes/          # Shell: Hono ルートハンドラー、DI組み立て
+├── router/          # Shell: tRPC ルーター定義、プロシージャ → usecase 呼び出し
 ├── usecases/        # Core: ビジネスロジック (純粋、Result型を返す)
 ├── domain/          # Core: backend固有のドメインロジック (必要な場合のみ)
 ├── adapters/        # Shell: リポジトリ実装、D1、外部API
-└── middleware/       # Shell: 認証、エラーハンドリング
+├── middleware/       # Shell: Hono ミドルウェア (CORS等)、tRPC ミドルウェア (認証等)
+└── app.ts           # Shell: Hono アプリ、tRPC マウント (/trpc/*)、非RPCルート (/auth/* 等)
 ```
 
-依存方向: `routes → usecases → domain ← adapters`、`middleware → domain`
+- Hono: HTTP層 (ミドルウェア、認証コールバック、webhook 等の非RPCエンドポイント)
+- tRPC: API層 (`/trpc/*` にマウント、クライアントから型安全に呼び出し)
+
+依存方向: `router → usecases → domain ← adapters`、`middleware → domain`
 
 ### packages/ — 共有定義
 
