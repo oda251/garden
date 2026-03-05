@@ -336,6 +336,19 @@ import { helper } from "./utils";
 
 ---
 
+## テスト
+
+テストフレームワーク: **vitest**
+
+| 種別 | 対象 | 内容 |
+|------|------|------|
+| ユニットテスト | `packages/validation/` | バリデーションルールの検証 |
+| ユニットテスト | `backend/middleware/` | 認証・エラーハンドリングの検証 |
+| e2e | `backend/` | APIエンドポイントの結合テスト |
+| e2e | `frontend/` | ユーザーフローのE2Eテスト |
+
+---
+
 ## その他の方針
 
 - **`interface` より `type` を優先**: `interface` は declaration merging が必要な場合のみ
