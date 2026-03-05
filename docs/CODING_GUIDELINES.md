@@ -6,16 +6,13 @@
 
 ```
 garden/
-├── frontend/          # React Router (FSD) → .claude/skills/frontend-coding/
-├── backend/           # Hono + tRPC on Cloudflare Workers (FC/IS) → .claude/skills/backend-coding/
+├── frontend/          # React Router (FSD)
+├── backend/           # Hono + tRPC on Cloudflare Workers (FC/IS)
 ├── packages/          # 共有パッケージ (モデル・DTO・バリデーション)
 ├── infra/             # Terraform (Cloudflare + GitHub)
 ├── .github/workflows/ # CI/CD (GitHub Actions)
 └── docs/
 ```
-
-領域固有の規約は各スキルを参照。コードレビュー規約は `.claude/skills/code-review/` を参照。
-ツールチェイン・テスト・CI/CD・インフラは `docs/TOOLCHAIN.md` を参照。
 
 ### packages/ — 共有定義
 
