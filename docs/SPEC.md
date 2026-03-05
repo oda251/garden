@@ -58,6 +58,13 @@ Better Authが管理するユーザーテーブル。アプリケーション固
 
 ## 認証・認可
 
+### 認証方式
+
+- **OIDC (OpenID Connect)** を使用し、外部プロバイダーによるログインを提供
+- Better AuthのSocial Providerプラグインで複数プロバイダーに対応
+- 対応プロバイダー: Google, GitHub 等（設定で追加可能）
+- パスワード認証は提供しない（OIDCのみ）
+
 ### ロール
 
 | ロール | 説明 |
@@ -127,9 +134,16 @@ Better Authが管理するユーザーテーブル。アプリケーション固
 | POST | /nodes/:id/tags | ノードにタグを付与 |
 | DELETE | /nodes/:id/tags/:tagId | ノードからタグを削除 |
 
-### 認証
+### 認証 (OIDC)
 
 Better Authが提供するエンドポイントを利用。
+
+| メソッド | パス | 説明 |
+|----------|------|------|
+| GET | /auth/sign-in/:provider | OIDCプロバイダーへリダイレクト |
+| GET | /auth/callback/:provider | OIDCコールバック |
+| POST | /auth/sign-out | ログアウト |
+| GET | /auth/session | 現在のセッション情報取得 |
 
 ### ユーザー管理 (admin)
 
