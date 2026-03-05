@@ -7,10 +7,9 @@
 ```
 garden/
 ├── frontend/          # React Router (FSD)
-├── backend/           # Hono on Cloudflare Workers (Clean Architecture)
+├── backend/           # Hono on Cloudflare Workers (Functional Core, Imperative Shell)
 ├── packages/          # 共有パッケージ (モデル・DTO・バリデーション)
-├── docs/
-└── ...
+└── docs/
 ```
 
 ### フロントエンド — Feature-Sliced Design (FSD)
@@ -25,7 +24,7 @@ frontend/
 └── shared/            # 共通ユーティリティ、UI部品、型定義
 ```
 
-各レイヤーの依存方向: `app → pages → widgets → features → entities → shared`
+依存方向: `app → pages → widgets → features → entities → shared`
 
 - 上位レイヤーは下位レイヤーにのみ依存可能 (逆方向の依存禁止)
 - 同一レイヤー内のスライス間は直接参照禁止
@@ -54,18 +53,15 @@ packages/
 ```
 
 - **Drizzleテーブル定義 + drizzle-zodが唯一の型定義元 (Single Source of Truth)**
-- `createSelectSchema` / `createInsertSchema` の第2引数でZodリファインメントも同時に定義
 - DTOはZodスキーマを `.pick()`, `.omit()`, `.extend()` 等で加工して生成
 - `refine` / `superRefine` によるビジネスバリデーションは `validation/` で一元管理
 - フロントエンド・バックエンド両方からこのパッケージを参照する
 
 ```typescript
-// packages/schema/node.ts  — SoT (テーブル定義 + Zodスキーマを一括定義)
+// packages/schema/node.ts
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
 
-// テーブル定義
 export const nodes = sqliteTable("nodes", {
   id: text("id").primaryKey(),
   parentId: text("parent_id").references(() => nodes.id),
@@ -76,7 +72,6 @@ export const nodes = sqliteTable("nodes", {
   updatedAt: text("updated_at").notNull(),
 });
 
-// Zodスキーマ (第2引数でフィールドレベルのリファインメントを同時定義)
 export const NodeSchema = createSelectSchema(nodes, {
   id: (schema) => schema.ulid(),
   title: (schema) => schema.min(1).max(200),
@@ -92,7 +87,7 @@ export type InsertNode = typeof InsertNodeSchema._type;
 ```
 
 ```typescript
-// packages/dto/node.ts  — DTOはZodスキーマから派生
+// packages/dto/node.ts
 import { InsertNodeSchema } from "../schema/node";
 
 export const CreateNodeDtoSchema = InsertNodeSchema.pick({
@@ -100,12 +95,11 @@ export const CreateNodeDtoSchema = InsertNodeSchema.pick({
   content: true,
   parentId: true,
 });
-
 export type CreateNodeDto = typeof CreateNodeDtoSchema._type;
 ```
 
 ```typescript
-// packages/validation/node.ts  — ビジネスルール (refine/superRefine)
+// packages/validation/node.ts
 import { CreateNodeDtoSchema } from "../dto/node";
 
 export const CreateNodeDtoValidatedSchema = CreateNodeDtoSchema.superRefine(
@@ -122,10 +116,6 @@ export const CreateNodeDtoValidatedSchema = CreateNodeDtoSchema.superRefine(
 ### クラス禁止
 
 ライブラリ境界 (Better Auth設定、Hono拡張等) を除き、**クラスの使用を禁止**する。
-
-- データ構造: Drizzleテーブル定義 → drizzle-zod → 型推論
-- ロジックのまとまり: コンパニオンパターン (後述)
-- 状態管理: React hooks / 関数ベースのストア
 
 ```typescript
 // BAD
@@ -151,7 +141,6 @@ export const NodeService = {
 型と同名のオブジェクトを定義し、名前空間的に使用する。
 
 ```typescript
-// 型とファクトリを同名でエクスポート
 export type Node = typeof NodeSchema._type;
 
 export const Node = {
@@ -163,7 +152,7 @@ export const Node = {
 
 ### 型アサーション禁止
 
-ライブラリ境界を除き、`as` による型アサーションを禁止する。ただし `as const` は例外として許可する。
+ライブラリ境界を除き、`as` による型アサーションを禁止する。`as const` は許可。
 
 ```typescript
 // BAD
@@ -183,7 +172,6 @@ if (parsed.success) {
 ```typescript
 import { ok, err, Result } from "neverthrow";
 
-// エラーはクラスではなくコンパニオンパターンで定義
 export type AppError = {
   code: string;
   message: string;
@@ -195,14 +183,12 @@ export const AppError = {
   forbidden: (msg: string): AppError => ({ code: "FORBIDDEN", message: msg, statusCode: 403 }),
 };
 
-// 関数は Result を返す
 const findNode = (id: string): ResultAsync<Node, AppError> =>
   ResultAsync.fromPromise(
     repo.findById(id),
     () => AppError.notFound(`Node ${id} not found`),
   );
 
-// チェーンで合成
 const result = await findNode(id)
   .andThen(validatePermission)
   .andThen(updateNode)
@@ -212,24 +198,11 @@ const result = await findNode(id)
   );
 ```
 
-```typescript
-// ルートハンドラーでのみ try-catch 許可
-app.onError((err, c) => {
-  // ここだけ try-catch / 例外キャッチが許可される
-  console.error(err);
-  return c.json({ error: "Internal Server Error" }, 500);
-});
-```
-
 ---
 
 ## ツールチェイン
 
 ### Linter — oxlint (type-aware)
-
-`.oxlintrc.json` で設定。`--typecheck` フラグ付きで実行し、型情報を活用したルールを有効化する。
-
-#### 有効化するルール
 
 ```jsonc
 // .oxlintrc.json
@@ -241,24 +214,15 @@ app.onError((err, c) => {
     "pedantic": "warn"
   },
   "rules": {
-    // 型アサーション禁止
     "typescript/no-unsafe-type-assertion": "error",
     "typescript/no-non-null-assertion": "error",
     "typescript/no-unnecessary-type-assertion": "error",
-
-    // クラス関連 (完全禁止は no-restricted-syntax 非対応のため部分的)
     "typescript/no-extraneous-class": "error",
-
-    // Promise安全性
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",
     "typescript/await-thenable": "error",
-
-    // import整理
     "import/no-cycle": "error",
     "import/no-self-import": "error",
-
-    // その他
     "no-var": "error",
     "prefer-const": "error",
     "no-console": "warn",
@@ -267,17 +231,12 @@ app.onError((err, c) => {
 }
 ```
 
-#### oxlintでカバーできないルール
-
-以下のルールは `no-restricted-syntax` (AST selector) が oxlint 未対応のため、コードレビューで担保する:
+oxlint未対応のルール (`no-restricted-syntax` 非対応):
 
 | ルール | 対応策 |
 |--------|--------|
 | クラス宣言の完全禁止 | `no-extraneous-class` で部分カバー + レビュー |
 | `try-catch` のルート以外での使用禁止 | レビュー |
-| FSD レイヤー間の依存方向 | dependency-cruiser |
-
-> oxlint が将来 `no-restricted-syntax` をサポートした際に移行する。
 
 ### 依存方向の強制 — dependency-cruiser
 
@@ -293,8 +252,6 @@ bunx depcruise --config .dependency-cruiser.cjs backend/ frontend/
 
 ### Formatter — oxfmt
 
-`.oxfmtrc.json` で設定。
-
 ```jsonc
 // .oxfmtrc.json
 {
@@ -308,9 +265,7 @@ bunx depcruise --config .dependency-cruiser.cjs backend/ frontend/
 }
 ```
 
-### Pre-commit フック
-
-`lefthook` または `husky` + `lint-staged` で以下を実行:
+### Pre-commit フック — lefthook
 
 ```yaml
 # lefthook.yml
@@ -324,27 +279,14 @@ pre-commit:
       run: oxlint --typecheck {staged_files}
 ```
 
-| ツール | 目的 |
-|--------|------|
-| **oxfmt** | コードフォーマット |
-| **oxlint** | lint (type-aware) |
-
 ### 実装完了時チェック
 
-以下のツールはプロジェクト全体を走査するため、pre-commitではなく**実装完了時**に実行する。
+プロジェクト全体を走査するため、pre-commitではなく実装完了時に実行する。
 
 ```bash
-# 未使用のエクスポート・ファイル・依存の検出
 bunx knip --no-progress
-
-# コード重複の検出
 similarity-ts . --threshold 0.8
 ```
-
-| ツール | 目的 |
-|--------|------|
-| **knip** | 未使用のエクスポート・ファイル・依存の検出 |
-| **similarity-ts** | コード重複の検出 |
 
 ---
 
@@ -353,10 +295,10 @@ similarity-ts . --threshold 0.8
 | 対象 | スタイル | 例 |
 |------|----------|-----|
 | ファイル名 | kebab-case | `node-service.ts` |
-| 型 / インターフェース | PascalCase | `NodeService`, `CreateNodeDto` |
+| 型 | PascalCase | `NodeService`, `CreateNodeDto` |
 | 関数 / 変数 | camelCase | `findNode`, `nodeCount` |
 | 定数 | UPPER_SNAKE_CASE | `MAX_DEPTH`, `DEFAULT_PAGE_SIZE` |
-| Zodスキーマ | PascalCase + `Schema` サフィックス | `NodeSchema`, `CreateNodeDtoSchema` |
+| Zodスキーマ | PascalCase + `Schema` | `NodeSchema`, `CreateNodeDtoSchema` |
 | React コンポーネント | PascalCase | `GraphView`, `NodeCard` |
 | React hooks | `use` プレフィックス | `useNodes`, `useGraphLayout` |
 | イベントハンドラー | `handle` プレフィックス | `handleNodeClick` |
@@ -387,11 +329,9 @@ import { helper } from "./utils";
 
 ## その他の方針
 
-- **`interface` より `type` を優先**: `type` を基本とし、`interface` は外部ライブラリの拡張 (declaration merging) が必要な場合のみ使用
+- **`interface` より `type` を優先**: `interface` は declaration merging が必要な場合のみ
 - **`enum` 禁止**: `as const` オブジェクト + 型推論で代替
-- **暗黙の `any` 禁止**: `tsconfig.json` で `noImplicitAny: true`
 - **`strict: true`**: TypeScriptの全strictオプション有効
 - **barrel exports**: 各スライス/モジュールは `index.ts` でPublic APIを公開
-- **副作用の分離**: 純粋関数とI/O関数を明確に分離
-- **パッケージマネージャ**: bun を使用
+- **パッケージマネージャ**: bun
 - **ライブラリは最新版を使用**: インストール時は常に最新の安定版を指定する
