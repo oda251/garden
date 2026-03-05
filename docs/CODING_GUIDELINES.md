@@ -51,22 +51,24 @@ backend/
 
 ```
 packages/
-├── schema/            # Drizzleテーブル定義 (Source of Truth)
-├── models/            # drizzle-zodで生成したZodスキーマ + 型
-├── dto/               # モデルから派生するDTO定義
+├── schema/            # Drizzleテーブル定義 + drizzle-zodスキーマ (Source of Truth)
+├── dto/               # スキーマから派生するDTO定義
 └── validation/        # バリデーションルール (refine, superRefine)
 ```
 
-- **Drizzleテーブル定義が唯一の型定義元 (Single Source of Truth)**
-- `drizzle-zod` の `createSelectSchema` / `createInsertSchema` でZodスキーマを導出
+- **Drizzleテーブル定義 + drizzle-zodが唯一の型定義元 (Single Source of Truth)**
+- `createSelectSchema` / `createInsertSchema` の第2引数でZodリファインメントも同時に定義
 - DTOはZodスキーマを `.pick()`, `.omit()`, `.extend()` 等で加工して生成
-- `refine` / `superRefine` によるバリデーションルールもここで一元管理
+- `refine` / `superRefine` によるビジネスバリデーションは `validation/` で一元管理
 - フロントエンド・バックエンド両方からこのパッケージを参照する
 
 ```typescript
-// packages/schema/node.ts  — SoT (Drizzleテーブル定義)
+// packages/schema/node.ts  — SoT (テーブル定義 + Zodスキーマを一括定義)
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createSelectSchema, createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 
+// テーブル定義
 export const nodes = sqliteTable("nodes", {
   id: text("id").primaryKey(),
   parentId: text("parent_id").references(() => nodes.id),
@@ -76,25 +78,25 @@ export const nodes = sqliteTable("nodes", {
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
-```
 
-```typescript
-// packages/models/node.ts  — drizzle-zodでZodスキーマを導出
-import { createSelectSchema, createInsertSchema } from "drizzle-zod";
-import { nodes } from "../schema/node";
-
-// Selectスキーマ (DB→アプリ方向のバリデーション)
-export const NodeSchema = createSelectSchema(nodes);
+// Zodスキーマ (第2引数でフィールドレベルのリファインメントを同時定義)
+export const NodeSchema = createSelectSchema(nodes, {
+  id: (schema) => schema.ulid(),
+  title: (schema) => schema.min(1).max(200),
+  createdAt: (schema) => schema.datetime(),
+  updatedAt: (schema) => schema.datetime(),
+});
 export type Node = typeof NodeSchema._type;
 
-// Insertスキーマ (アプリ→DB方向のバリデーション)
-export const InsertNodeSchema = createInsertSchema(nodes);
+export const InsertNodeSchema = createInsertSchema(nodes, {
+  title: (schema) => schema.min(1).max(200),
+});
 export type InsertNode = typeof InsertNodeSchema._type;
 ```
 
 ```typescript
 // packages/dto/node.ts  — DTOはZodスキーマから派生
-import { InsertNodeSchema } from "../models/node";
+import { InsertNodeSchema } from "../schema/node";
 
 export const CreateNodeDto = InsertNodeSchema.pick({
   title: true,
@@ -106,7 +108,7 @@ export type CreateNodeDto = typeof CreateNodeDto._type;
 ```
 
 ```typescript
-// packages/validation/node.ts  — refine/superRefine をここで登録
+// packages/validation/node.ts  — ビジネスルール (refine/superRefine)
 import { CreateNodeDto } from "../dto/node";
 
 export const CreateNodeDtoValidated = CreateNodeDto.superRefine(
