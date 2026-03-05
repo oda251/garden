@@ -69,12 +69,12 @@ Claude Codeのカスタムスキル (`.claude/skills/<name>/SKILL.md`) の設計
 
 ### gen-usecase
 
-- **目的**: Clean Architecture のユースケース雛形を生成
+- **目的**: ユースケース雛形を生成
 - **実行タイミング**: `/gen-usecase <ユースケース名>`
 - **生成物**:
-  - `backend/application/<name>.ts` — ユースケース (コンパニオンパターン)
-  - `backend/domain/` に必要なリポジトリインターフェース追加
+  - `backend/usecases/<name>.ts` — ユースケース (Result型を返す純粋関数)
 - **テンプレート**: neverthrow の Result 型、コンパニオンパターンに準拠
+- **注意**: 単純なCRUDにはusecaseを作らない。ドメインロジックがある場合のみ使用
 
 ### migrate
 

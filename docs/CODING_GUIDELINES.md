@@ -31,21 +31,58 @@ frontend/
 - 同一レイヤー内のスライス間は直接参照禁止
 - 各スライスは `index.ts` で公開APIを定義 (Public API パターン)
 
-### バックエンド — Clean Architecture
+### バックエンド
 
 ```
 backend/
-├── presentation/      # Honoルートハンドラー、ミドルウェア
-├── application/       # ユースケース、アプリケーションサービス
-├── domain/            # ドメインモデル、ドメインサービス、リポジトリインターフェース
-└── infrastructure/    # リポジトリ実装、外部API連携、D1アクセス
+├── routes/            # Honoルートハンドラー、ミドルウェア
+├── usecases/          # ビジネスロジックの組み立て (複数domain横断OK)
+├── domain/            # 型定義、ドメインロジック (コンパニオンパターン)
+└── adapters/          # DB操作 (D1)、外部API連携
 ```
 
-依存方向: `presentation → application → domain ← infrastructure`
+依存方向: `routes → usecases → domain ← adapters`
+
+#### ルール
 
 - `domain` は他のどの層にも依存しない
-- `infrastructure` は `domain` のインターフェースを実装する (依存性逆転)
-- ユースケースは1クラス1責務 (ただし後述のコンパニオンパターンで定義)
+- `adapters` は `domain` の型を使うが、インターフェースによる依存性逆転は不要。型が合っていれば良い
+- 単純なCRUD (ロジックがない) は `routes` から直接 `adapters` を呼んでよい。usecase層を経由しなくてよい
+- usecase を作る基準: **ドメインロジックの判定・変換・組み立てがある場合のみ**
+- バリデーションの置き場所: Zodパースは `routes` で行う。ビジネスルールの検証は `usecases` で行う
+
+#### 単純なCRUD — usecaseを作らない例
+
+```typescript
+// routes/nodes.ts — DBから取って返すだけならusecase不要
+app.get("/nodes/:id", async (c) => {
+  const id = c.req.param("id");
+  return nodeRepo.findById(c.env.DB, id)
+    .match(
+      (node) => c.json(node, 200),
+      (error) => c.json({ error }, error.statusCode),
+    );
+});
+```
+
+#### ロジックがある場合 — usecaseを作る例
+
+```typescript
+// usecases/create-node.ts — 親ノードの存在確認 + 深さ制限がある
+const createNode = (
+  input: CreateNodeDto,
+  parent: Node | null,
+  maxDepth: number,
+): Result<InsertNode, AppError> => {
+  if (input.parentId && !parent) {
+    return err(AppError.notFound("Parent not found"));
+  }
+  if (parent && Node.getDepth(parent) >= maxDepth) {
+    return err(AppError.validation("Max depth exceeded"));
+  }
+  return ok({ ...input, id: generateUlid(), createdAt: now() });
+};
+```
 
 ### packages/ — 共有定義
 
