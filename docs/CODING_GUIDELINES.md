@@ -31,7 +31,7 @@ frontend/
 - 上位レイヤーは下位レイヤーにのみ依存可能 (逆方向の依存禁止)
 - 同一レイヤー内のスライス間は直接参照禁止
 - 各スライスは `index.ts` で公開APIを定義 (Public API パターン)
-- 状態管理: React Router の loader/action + URL params + cookies を優先。クライアントのみの複雑な一時状態 (グラフ操作等) は React Context または Zustand を最小限で使用
+- 状態管理: React Router の loader/action + URL params + cookies を優先。クライアントのみの高頻度更新状態 (グラフ操作等) は Zustand を最小限で使用
 
 ### バックエンド — Functional Core, Imperative Shell
 
