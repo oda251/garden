@@ -36,7 +36,7 @@ frontend/
 backend/
 ├── routes/          # Shell: Hono ルートハンドラー、DI組み立て
 ├── usecases/        # Core: ビジネスロジック (純粋、Result型を返す)
-├── domain/          # Core: 型定義、ドメインロジック (コンパニオンパターン)
+├── domain/          # Core: backend固有のドメインロジック (必要な場合のみ)
 ├── adapters/        # Shell: リポジトリ実装、D1、外部API
 └── middleware/       # Shell: 認証、エラーハンドリング
 ```
@@ -47,12 +47,13 @@ backend/
 
 ```
 packages/
-├── schema/            # Drizzleテーブル定義 + drizzle-zodスキーマ (Source of Truth)
+├── schema/            # Drizzleテーブル定義 + drizzle-zodスキーマ + コンパニオン (Source of Truth)
 ├── dto/               # スキーマから派生するDTO定義
 └── validation/        # バリデーションルール (refine, superRefine)
 ```
 
 - **Drizzleテーブル定義 + drizzle-zodが唯一の型定義元 (Single Source of Truth)**
+- 型のコンパニオンパターン（`Node.isRoot()` 等）も `schema/` に同居させる
 - DTOはZodスキーマを `.pick()`, `.omit()`, `.extend()` 等で加工して生成
 - `refine` / `superRefine` によるビジネスバリデーションは `validation/` で一元管理
 - フロントエンド・バックエンド両方からこのパッケージを参照する
@@ -86,6 +87,12 @@ export const InsertNodeSchema = createInsertSchema(nodes, {
   title: (schema) => schema.min(1).max(200),
 });
 export type InsertNode = typeof InsertNodeSchema._type;
+
+// コンパニオンパターン: 型と同名のオブジェクトでドメインロジックを提供
+export const Node = {
+  isRoot: (node: Node): boolean => node.parentId === null,
+  getDepth: (node: Node, allNodes: Node[]): number => { ... },
+};
 ```
 
 ```typescript
@@ -140,13 +147,13 @@ export const NodeService = {
 
 ### コンパニオンパターン
 
-型と同名のオブジェクトを定義し、名前空間的に使用する。
+型と同名のオブジェクトを定義し、名前空間的に使用する。packages/schema/ に型と同居させる。
 
 ```typescript
+// packages/schema/node.ts
 export type Node = typeof NodeSchema._type;
 
 export const Node = {
-  create: (params: CreateNodeDto): Node => ({ ... }),
   isRoot: (node: Node): boolean => node.parentId === null,
   getDepth: (node: Node, allNodes: Node[]): number => { ... },
 };
