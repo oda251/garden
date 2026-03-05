@@ -45,9 +45,10 @@ Claude Codeのカスタムスキル (`.claude/skills/<name>/SKILL.md`) の設計
 - **目的**: packages/schema/ にDrizzleテーブル + drizzle-zodスキーマの雛形を生成
 - **実行タイミング**: `/gen-schema <テーブル名> <カラム定義...>`
 - **生成物**:
-  - `packages/schema/<name>.ts` — テーブル定義 + createSelectSchema / createInsertSchema
+  - `packages/schema/<name>.ts` — テーブル定義 + createSelectSchema / createInsertSchema + コンパニオン雛形
   - `packages/dto/<name>.ts` — DTO雛形
   - `packages/validation/<name>.ts` — バリデーション雛形
+  - `packages/mock/<name>.ts` — モックファクトリ雛形
 
 ### gen-feature
 
