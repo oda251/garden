@@ -50,14 +50,14 @@ packages/
 ├── schema/            # Drizzleテーブル定義 + drizzle-zodスキーマ + コンパニオン (Source of Truth)
 ├── dto/               # スキーマから派生するDTO定義
 ├── validation/        # バリデーションルール (refine, superRefine)
-└── mock/              # Zodスキーマからモックデータ生成 (@anatine/zod-mock)
+└── mock/              # Zodスキーマからモックデータ生成 (zod-schema-faker)
 ```
 
 - **Drizzleテーブル定義 + drizzle-zodが唯一の型定義元 (Single Source of Truth)**
 - 型のコンパニオンパターン（`Node.isRoot()` 等）も `schema/` に同居させる
 - DTOはZodスキーマを `.pick()`, `.omit()`, `.extend()` 等で加工して生成
 - `refine` / `superRefine` によるビジネスバリデーションは `validation/` で一元管理
-- モックデータは `@anatine/zod-mock` でZodスキーマから自動生成
+- モックデータは `zod-schema-faker` でZodスキーマから自動生成 (seed対応で再現性あり)
 - フロントエンド・バックエンド両方からこのパッケージを参照する
 
 依存方向: `validation → dto → schema`、`mock → schema`
