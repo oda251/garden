@@ -37,7 +37,6 @@ Claude Codeのカスタムスキル (`.claude/skills/<name>/SKILL.md`) の設計
   - 型アサーション (`as`) の使用 (`as const` は除外)
   - try-catch のルート以外での使用
   - neverthrow の Result 型パターンの遵守
-  - レイヤー間の依存方向 (FSD / バックエンド)
   - 命名規則の遵守
   - コンパニオンパターンの適用
 

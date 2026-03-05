@@ -41,7 +41,7 @@ backend/
 └── middleware/       # Shell: 認証、エラーハンドリング
 ```
 
-依存方向: `routes → usecases → domain ← adapters`
+依存方向: `routes → usecases → domain ← adapters`、`middleware → domain`
 
 ### packages/ — 共有定義
 
@@ -56,6 +56,8 @@ packages/
 - DTOはZodスキーマを `.pick()`, `.omit()`, `.extend()` 等で加工して生成
 - `refine` / `superRefine` によるビジネスバリデーションは `validation/` で一元管理
 - フロントエンド・バックエンド両方からこのパッケージを参照する
+
+依存方向: `validation → dto → schema`
 
 ```typescript
 // packages/schema/node.ts
@@ -126,7 +128,7 @@ class NodeService {
 
 // GOOD: コンパニオンパターン
 export type NodeService = {
-  getById: (id: string) => Promise<Result<Node, AppError>>;
+  getById: (id: string) => ResultAsync<Node, AppError>;
 };
 
 export const NodeService = {
@@ -170,7 +172,7 @@ if (parsed.success) {
 `try-catch` はアプリケーションのルート (エントリポイント) でのみ使用する。それ以外では `neverthrow` の `Result` 型を使う。
 
 ```typescript
-import { ok, err, Result } from "neverthrow";
+import { ok, err, ResultAsync } from "neverthrow";
 
 export type AppError = {
   code: string;
