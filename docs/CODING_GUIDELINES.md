@@ -9,6 +9,8 @@ garden/
 ├── frontend/          # React Router (FSD)
 ├── backend/           # Hono on Cloudflare Workers (Functional Core, Imperative Shell)
 ├── packages/          # 共有パッケージ (モデル・DTO・バリデーション)
+├── infra/             # Terraform (Cloudflare + GitHub)
+├── .github/workflows/ # CI/CD (GitHub Actions)
 └── docs/
 ```
 
@@ -348,6 +350,48 @@ import { helper } from "./utils";
 | ユニットテスト | `backend/middleware/` | 認証・エラーハンドリングの検証 |
 | e2e | `backend/` | APIエンドポイントの結合テスト |
 | e2e | `frontend/` | ユーザーフローのE2Eテスト (Playwright) |
+
+---
+
+## CI/CD — GitHub Actions
+
+### CI (全PR)
+
+```yaml
+# .github/workflows/ci.yml
+steps:
+  - oxfmt --check          # format check
+  - oxlint --typecheck     # lint
+  - bunx depcruise --cache --config .dependency-cruiser.cjs backend/ frontend/  # 依存方向チェック
+  - vitest run             # unit test + backend e2e
+  - playwright test        # frontend e2e
+```
+
+### CD (mainマージ時)
+
+```yaml
+# .github/workflows/cd.yml
+on:
+  push:
+    branches: [main]
+steps:
+  - wrangler deploy        # backend → Cloudflare Workers
+  - wrangler pages deploy  # frontend → Cloudflare Pages
+```
+
+---
+
+## インフラ — Terraform
+
+```
+infra/
+├── main.tf
+├── variables.tf
+├── cloudflare.tf          # D1, Workers, Pages, DNS
+└── github.tf              # repo設定, branch protection
+```
+
+Terraform providers: `cloudflare/cloudflare`, `integrations/github`
 
 ---
 
