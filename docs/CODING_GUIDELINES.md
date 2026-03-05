@@ -98,20 +98,20 @@ export type InsertNode = typeof InsertNodeSchema._type;
 // packages/dto/node.ts  — DTOはZodスキーマから派生
 import { InsertNodeSchema } from "../schema/node";
 
-export const CreateNodeDto = InsertNodeSchema.pick({
+export const CreateNodeDtoSchema = InsertNodeSchema.pick({
   title: true,
   content: true,
   parentId: true,
 });
 
-export type CreateNodeDto = typeof CreateNodeDto._type;
+export type CreateNodeDto = typeof CreateNodeDtoSchema._type;
 ```
 
 ```typescript
 // packages/validation/node.ts  — ビジネスルール (refine/superRefine)
-import { CreateNodeDto } from "../dto/node";
+import { CreateNodeDtoSchema } from "../dto/node";
 
-export const CreateNodeDtoValidated = CreateNodeDto.superRefine(
+export const CreateNodeDtoValidatedSchema = CreateNodeDtoSchema.superRefine(
   (data, ctx) => {
     // カスタムバリデーション
   },
@@ -155,7 +155,7 @@ export const NodeService = {
 
 ```typescript
 // 型とファクトリを同名でエクスポート
-export type Node = z.infer<typeof NodeSchema>;
+export type Node = typeof NodeSchema._type;
 
 export const Node = {
   create: (params: CreateNodeDto): Node => ({ ... }),
@@ -166,7 +166,7 @@ export const Node = {
 
 ### 型アサーション禁止
 
-ライブラリ境界を除き、`as` による型アサーションを禁止する。
+ライブラリ境界を除き、`as` による型アサーションを禁止する。ただし `as const` は例外として許可する。
 
 ```typescript
 // BAD
@@ -186,11 +186,23 @@ if (parsed.success) {
 ```typescript
 import { ok, err, Result } from "neverthrow";
 
+// エラーはクラスではなくコンパニオンパターンで定義
+export type AppError = {
+  code: string;
+  message: string;
+  statusCode: number;
+};
+
+export const AppError = {
+  notFound: (msg: string): AppError => ({ code: "NOT_FOUND", message: msg, statusCode: 404 }),
+  forbidden: (msg: string): AppError => ({ code: "FORBIDDEN", message: msg, statusCode: 403 }),
+};
+
 // 関数は Result を返す
 const findNode = (id: string): ResultAsync<Node, AppError> =>
   ResultAsync.fromPromise(
     repo.findById(id),
-    (e) => new AppError("NOT_FOUND", `Node ${id} not found`),
+    () => AppError.notFound(`Node ${id} not found`),
   );
 
 // チェーンで合成
@@ -301,16 +313,27 @@ pre-commit:
     lint:
       glob: "*.{ts,tsx,js,jsx}"
       run: oxlint --typecheck {staged_files}
-    knip:
-      run: npx knip --no-progress
-    similarity:
-      run: similarity-ts . --threshold 0.8
 ```
 
 | ツール | 目的 |
 |--------|------|
 | **oxfmt** | コードフォーマット |
 | **oxlint** | lint (type-aware) |
+
+### 実装完了時チェック
+
+以下のツールはプロジェクト全体を走査するため、pre-commitではなく**実装完了時**に実行する。
+
+```bash
+# 未使用のエクスポート・ファイル・依存の検出
+npx knip --no-progress
+
+# コード重複の検出
+similarity-ts . --threshold 0.8
+```
+
+| ツール | 目的 |
+|--------|------|
 | **knip** | 未使用のエクスポート・ファイル・依存の検出 |
 | **similarity-ts** | コード重複の検出 |
 
@@ -340,8 +363,8 @@ import { z } from "zod";
 import { ok, err } from "neverthrow";
 
 // 2. packages/ (共有パッケージ)
-import { NodeSchema } from "@garden/models";
-import { CreateNodeDto } from "@garden/dto";
+import { NodeSchema } from "@garden/schema";
+import { CreateNodeDtoSchema } from "@garden/dto";
 
 // 3. 同一プロジェクト内の上位レイヤー → 下位レイヤー
 import { useNodes } from "~/entities/node";

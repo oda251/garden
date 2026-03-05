@@ -26,7 +26,7 @@
 | id | TEXT (PK) | 一意識別子 (ULID等) |
 | parent_id | TEXT (FK → nodes.id, nullable) | 親ノードID。nullの場合はルートノード |
 | title | TEXT NOT NULL | ノードのタイトル |
-| content | TEXT | Markdown形式の本文 |
+| content | TEXT NOT NULL DEFAULT '' | Markdown形式の本文 |
 | created_by | TEXT (FK → users.id) | 作成者 |
 | created_at | TEXT NOT NULL | 作成日時 (ISO 8601) |
 | updated_at | TEXT NOT NULL | 更新日時 (ISO 8601) |
