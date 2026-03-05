@@ -6,54 +6,15 @@
 
 ```
 garden/
-├── frontend/          # React Router (FSD)
-├── backend/           # Hono + tRPC on Cloudflare Workers (Functional Core, Imperative Shell)
+├── frontend/          # React Router (FSD) → .claude/skills/frontend-coding/
+├── backend/           # Hono + tRPC on Cloudflare Workers (FC/IS) → .claude/skills/backend-coding/
 ├── packages/          # 共有パッケージ (モデル・DTO・バリデーション)
 ├── infra/             # Terraform (Cloudflare + GitHub)
 ├── .github/workflows/ # CI/CD (GitHub Actions)
 └── docs/
 ```
 
-### フロントエンド — Feature-Sliced Design (FSD)
-
-```
-frontend/
-├── app/               # アプリ初期化、プロバイダー、ルーティング
-├── pages/             # ページコンポーネント (ルート単位)
-├── widgets/           # 独立したUI複合体 (ヘッダー、サイドバー等)
-├── features/          # ユーザーインタラクション (CRUD操作等)
-├── entities/          # ビジネスエンティティ (Node, Tag, User)
-└── shared/            # 共通ユーティリティ、UI部品、型定義
-```
-
-依存方向: `app → pages → widgets → features → entities → shared`
-
-- 上位レイヤーは下位レイヤーにのみ依存可能 (逆方向の依存禁止)
-- 同一レイヤー内のスライス間は直接参照禁止
-- 各スライスは `index.ts` で公開APIを定義 (Public API パターン)
-- 状態管理: React Router の loader/action + URL params + cookies を優先。クライアントのみの高頻度更新状態 (グラフ操作等) は Zustand を最小限で使用
-- フォーム: React Hook Form + `@hookform/resolvers/zod` で packages/dto/ の Zod スキーマをバリデーションに使用
-- グラフ描画: React Flow (ノード操作・ズーム/パン/ドラッグ組み込み)
-- キャッシュ: tRPC (TanStack Query) のクエリキャッシュで不要なリクエストを抑制
-
-### バックエンド — Hono + tRPC, Functional Core, Imperative Shell
-
-```
-backend/
-├── router/          # Shell: tRPC ルーター定義、プロシージャ → usecase 呼び出し
-├── usecases/        # Core: ビジネスロジック (純粋、Result型を返す)
-├── domain/          # Core: backend固有のドメインロジック (必要な場合のみ)
-├── adapters/        # Shell: リポジトリ実装、D1、外部API
-├── middleware/       # Shell: Hono ミドルウェア (CORS等)、tRPC ミドルウェア (認証等)
-└── app.ts           # Shell: Hono アプリ、tRPC マウント (/trpc/*)、非RPCルート (/auth/* 等)
-```
-
-- Hono: HTTP層 (ミドルウェア、認証コールバック、webhook 等の非RPCエンドポイント)
-- tRPC: API層 (`/trpc/*` にマウント、クライアントから型安全に呼び出し)
-
-依存方向: `router → usecases → domain ← adapters`、`middleware → domain`
-
-- キャッシュ: Cloudflare Cache API でD1クエリ結果をエッジキャッシュ (無料、TTL は Cache-Control で制御)
+領域固有の規約は各スキルを参照。コードレビュー規約は `.claude/skills/code-review/` を参照。
 
 ### packages/ — 共有定義
 
@@ -134,95 +95,6 @@ export const CreateNodeDtoValidatedSchema = CreateNodeDtoSchema.superRefine(
 
 ---
 
-## コーディングルール
-
-### クラス禁止
-
-ライブラリ境界 (Better Auth設定、Hono拡張等) を除き、**クラスの使用を禁止**する。
-
-```typescript
-// BAD
-class NodeService {
-  constructor(private repo: NodeRepository) {}
-  async getById(id: string) { ... }
-}
-
-// GOOD: コンパニオンパターン
-export type NodeService = {
-  getById: (id: string) => ResultAsync<Node, AppError>;
-};
-
-export const NodeService = {
-  create: (repo: NodeRepository): NodeService => ({
-    getById: (id) => repo.findById(id),
-  }),
-};
-```
-
-### コンパニオンパターン
-
-型と同名のオブジェクトを定義し、名前空間的に使用する。packages/schema/ に型と同居させる。
-
-```typescript
-// packages/schema/node.ts
-export type Node = typeof NodeSchema._type;
-
-export const Node = {
-  isRoot: (node: Node): boolean => node.parentId === null,
-  getDepth: (node: Node, allNodes: Node[]): number => { ... },
-};
-```
-
-### 型アサーション禁止
-
-ライブラリ境界を除き、`as` による型アサーションを禁止する。`as const` は許可。
-
-```typescript
-// BAD
-const user = data as User;
-
-// GOOD
-const parsed = UserSchema.safeParse(data);
-if (parsed.success) {
-  const user = parsed.data;
-}
-```
-
-### neverthrow によるエラーハンドリング
-
-`try-catch` はアプリケーションのルート (エントリポイント) でのみ使用する。それ以外では `neverthrow` の `Result` 型を使う。
-
-```typescript
-import { ok, err, ResultAsync } from "neverthrow";
-
-export type AppError = {
-  code: string;
-  message: string;
-  statusCode: number;
-};
-
-export const AppError = {
-  notFound: (msg: string): AppError => ({ code: "NOT_FOUND", message: msg, statusCode: 404 }),
-  forbidden: (msg: string): AppError => ({ code: "FORBIDDEN", message: msg, statusCode: 403 }),
-};
-
-const findNode = (id: string): ResultAsync<Node, AppError> =>
-  ResultAsync.fromPromise(
-    repo.findById(id),
-    () => AppError.notFound(`Node ${id} not found`),
-  );
-
-const result = await findNode(id)
-  .andThen(validatePermission)
-  .andThen(updateNode)
-  .match(
-    (node) => c.json(node, 200),
-    (error) => c.json({ error: error.message }, error.statusCode),
-  );
-```
-
----
-
 ## ツールチェイン
 
 ### Linter — oxlint (type-aware)
@@ -253,13 +125,6 @@ const result = await findNode(id)
   }
 }
 ```
-
-oxlint未対応のルール (`no-restricted-syntax` 非対応):
-
-| ルール | 対応策 |
-|--------|--------|
-| クラス宣言の完全禁止 | `no-extraneous-class` で部分カバー + レビュー |
-| `try-catch` のルート以外での使用禁止 | レビュー |
 
 ### 依存方向の強制 — dependency-cruiser
 
@@ -310,22 +175,6 @@ pre-commit:
 bunx knip --no-progress
 similarity-ts . --threshold 0.8
 ```
-
----
-
-## 命名規則
-
-| 対象 | スタイル | 例 |
-|------|----------|-----|
-| ファイル名 | kebab-case | `node-service.ts` |
-| 型 | PascalCase | `NodeService`, `CreateNodeDto` |
-| 関数 / 変数 | camelCase | `findNode`, `nodeCount` |
-| 定数 | UPPER_SNAKE_CASE | `MAX_DEPTH`, `DEFAULT_PAGE_SIZE` |
-| Zodスキーマ | PascalCase + `Schema` | `NodeSchema`, `CreateNodeDtoSchema` |
-| React コンポーネント | PascalCase | `GraphView`, `NodeCard` |
-| React hooks | `use` プレフィックス | `useNodes`, `useGraphLayout` |
-| イベントハンドラー | `handle` プレフィックス | `handleNodeClick` |
-| boolean変数 | `is` / `has` / `can` プレフィックス | `isRoot`, `hasChildren` |
 
 ---
 

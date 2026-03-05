@@ -6,50 +6,17 @@ Claude Code のスキルとサブエージェントの設計を管理する。
 
 - **スキル**: 固定コマンド列、または特定領域のコーディング規約を提供
 - **サブエージェント**: スキルを参照し、判断・実行する
-- CODING_GUIDELINES.md は共通部分 (packages/、ツールチェイン、命名規則、インポート順序、CI/CD、インフラ、その他の方針) のみ残す
+- CODING_GUIDELINES.md は共通部分 (packages/、ツールチェイン、インポート順序、テスト、CI/CD、インフラ、その他の方針) のみ
 - 領域固有の規約はスキルに分離し、サブエージェントが必要な分だけ参照する
 
 ## スキル
 
 | スキル名 | 概要 | ステータス |
 |----------|------|-----------|
-| frontend-coding | FSD構成・状態管理等のフロントエンド規約 | 未実装 |
-| backend-coding | FC/IS構成・neverthrow等のバックエンド規約 | 未実装 |
-| code-review | コーディングルールのレビューチェックリスト | 未実装 |
+| frontend-coding | FSD構成・状態管理・フォーム・グラフ・キャッシュ | 実装済み |
+| backend-coding | FC/IS構成・Hono+tRPC・neverthrow・キャッシュ | 実装済み |
+| code-review | コーディングルールのレビューチェックリスト | 実装済み |
 | post-impl-check | knip + similarity-ts による実装完了時チェック | 実装済み |
-
-### frontend-coding
-
-- **内容** (CODING_GUIDELINES.md から分離):
-  - FSD ディレクトリ構成・依存方向
-  - レイヤー間ルール (上位→下位のみ、同一レイヤー間参照禁止、Public API パターン)
-  - 状態管理: React Router loader/action + URL params + cookies 優先、Zustand は最小限
-  - フロントエンド固有のサンプルコード
-
-### backend-coding
-
-- **内容** (CODING_GUIDELINES.md から分離):
-  - FC/IS ディレクトリ構成・依存方向
-  - neverthrow による ResultAsync エラーハンドリング
-  - AppError コンパニオンパターン
-  - バックエンド固有のサンプルコード
-
-### code-review
-
-- **内容** (CODING_GUIDELINES.md のコーディングルールを分離):
-  - クラス使用の有無 (ライブラリ境界以外)
-  - 型アサーション (`as`) の使用 (`as const` は除外)
-  - try-catch のルート以外での使用
-  - neverthrow の Result 型パターンの遵守
-  - コンパニオンパターンの適用
-  - oxlint 未対応ルールの補完 (クラス宣言完全禁止、try-catch 制限)
-
-### post-impl-check
-
-- **実行**: `/post-impl-check`
-- **処理**:
-  1. `bunx knip --no-progress` — 未使用エクスポート・ファイル・依存の検出
-  2. `similarity-ts . --threshold 0.8` — コード重複の検出
 
 ## サブエージェント
 
