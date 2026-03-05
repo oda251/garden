@@ -284,7 +284,7 @@ app.onError((err, c) => {
 バックエンド・フロントエンド両方のレイヤー間依存ルールを静的に検証する。
 
 ```bash
-npx depcruise --config .dependency-cruiser.cjs backend/ frontend/
+bunx depcruise --config .dependency-cruiser.cjs backend/ frontend/
 ```
 
 - `--cache` でキャッシュ有効化 (2回目以降高速)
@@ -335,7 +335,7 @@ pre-commit:
 
 ```bash
 # 未使用のエクスポート・ファイル・依存の検出
-npx knip --no-progress
+bunx knip --no-progress
 
 # コード重複の検出
 similarity-ts . --threshold 0.8

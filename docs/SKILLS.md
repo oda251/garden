@@ -26,7 +26,7 @@ Claude Codeのカスタムスキル (`.claude/skills/<name>/SKILL.md`) の設計
 - **目的**: 実装完了後に未使用コード・コード重複を検出
 - **実行タイミング**: ユーザーが `/post-impl-check` で明示的に実行
 - **処理内容**:
-  1. `npx knip --no-progress` — 未使用エクスポート・ファイル・依存の検出
+  1. `bunx knip --no-progress` — 未使用エクスポート・ファイル・依存の検出
   2. `similarity-ts . --threshold 0.8` — コード重複の検出
 - **対応方針**: 検出結果に応じて削除またはリファクタリングを提案。大きな変更はユーザー確認後に実施
 - **ステータス**: 実装済み (`.claude/skills/post-impl-check/SKILL.md`)
@@ -81,9 +81,9 @@ Claude Codeのカスタムスキル (`.claude/skills/<name>/SKILL.md`) の設計
 - **目的**: Drizzle Kit によるマイグレーション操作
 - **実行タイミング**: `/migrate [generate|push|drop]`
 - **処理内容**:
-  - `generate`: `npx drizzle-kit generate` でマイグレーションファイル生成
-  - `push`: `npx drizzle-kit push` でスキーマをD1に反映
-  - `drop`: `npx drizzle-kit drop` でマイグレーション削除
+  - `generate`: `bunx drizzle-kit generate` でマイグレーションファイル生成
+  - `push`: `bunx drizzle-kit push` でスキーマをD1に反映
+  - `drop`: `bunx drizzle-kit drop` でマイグレーション削除
 - **注意**: push/drop は破壊的操作のためユーザー確認を挟む
 
 ### coding-guidelines
