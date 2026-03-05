@@ -1,0 +1,142 @@
+# ツールチェイン・インフラ
+
+## Linter — oxlint (type-aware)
+
+```jsonc
+// .oxlintrc.json
+{
+  "plugins": ["typescript", "import", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "warn"
+  },
+  "rules": {
+    "typescript/no-unsafe-type-assertion": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-extraneous-class": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/await-thenable": "error",
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "no-console": "warn",
+    "eqeqeq": "error"
+  }
+}
+```
+
+oxlint未対応のルール (`no-restricted-syntax` 非対応):
+
+| ルール | 対応策 |
+|--------|--------|
+| クラス宣言の完全禁止 | `no-extraneous-class` で部分カバー + レビュー |
+| `try-catch` のルート以外での使用禁止 | レビュー |
+
+## 依存方向の強制 — dependency-cruiser
+
+バックエンド・フロントエンド両方のレイヤー間依存ルールを静的に検証する。
+
+```bash
+bunx depcruise --config .dependency-cruiser.cjs backend/ frontend/
+```
+
+- `--cache` でキャッシュ有効化 (2回目以降高速)
+- `tsPreCompilationDeps: true` でTS直接解析
+- CI または pre-commit で実行
+
+## Formatter — oxfmt
+
+```jsonc
+// .oxfmtrc.json
+{
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "bracketSpacing": true
+}
+```
+
+## Pre-commit フック — lefthook
+
+```yaml
+# lefthook.yml
+pre-commit:
+  commands:
+    format:
+      glob: "*.{ts,tsx,js,jsx,json}"
+      run: oxfmt --write {staged_files}
+    lint:
+      glob: "*.{ts,tsx,js,jsx}"
+      run: oxlint --typecheck {staged_files}
+```
+
+## 実装完了時チェック
+
+プロジェクト全体を走査するため、pre-commitではなく実装完了時に実行する。
+
+```bash
+bunx knip --no-progress
+similarity-ts . --threshold 0.8
+```
+
+---
+
+## テスト
+
+テストフレームワーク: **vitest**
+
+| 種別 | 対象 | 内容 |
+|------|------|------|
+| ユニットテスト | `packages/validation/` | バリデーションルールの検証 |
+| ユニットテスト | `backend/middleware/` | 認証・エラーハンドリングの検証 |
+| e2e | `backend/` | APIエンドポイントの結合テスト |
+| e2e | `frontend/` | ユーザーフローのE2Eテスト (Playwright) |
+
+---
+
+## CI/CD — GitHub Actions
+
+### CI (全PR)
+
+```yaml
+# .github/workflows/ci.yml
+steps:
+  - oxfmt --check          # format check
+  - oxlint --typecheck     # lint
+  - bunx depcruise --cache --config .dependency-cruiser.cjs backend/ frontend/  # 依存方向チェック
+  - vitest run             # unit test + backend e2e
+  - playwright test        # frontend e2e
+```
+
+### CD (mainマージ時)
+
+```yaml
+# .github/workflows/cd.yml
+on:
+  push:
+    branches: [main]
+steps:
+  - wrangler deploy        # backend → Cloudflare Workers
+  - wrangler pages deploy  # frontend → Cloudflare Pages
+```
+
+---
+
+## インフラ — Terraform
+
+```
+infra/
+├── main.tf
+├── variables.tf
+├── cloudflare.tf          # D1, Workers, Pages, DNS
+└── github.tf              # repo設定, branch protection
+```
+
+Terraform providers: `cloudflare/cloudflare`, `integrations/github`
