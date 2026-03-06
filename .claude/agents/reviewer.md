@@ -12,19 +12,8 @@ allowed-tools: Read, Glob, Grep, Bash(git diff *), Bash(git log *), Bash(git sho
 
 1. `git diff` で変更差分を取得
 2. 変更されたファイルの周辺コードを `Read` で確認
-3. 以下のチェックリストで検査
-4. 結果を構造化して返す
-
-## チェックリスト
-
-1. **クラス禁止**: ライブラリ境界を除き `class` を使用していないか
-2. **型アサーション禁止**: `as` を使用していないか (`as const` は許可)
-3. **neverthrow**: `try-catch` がルート以外で使われていないか、Result型パターンに従っているか
-4. **コンパニオンパターン**: 型とロジックが適切に同居しているか
-5. **Zustand最小限**: サーバーデータやURL表現可能な状態にZustandを使っていないか
-6. **命名規則**: ファイル名kebab-case、型PascalCase、関数camelCase、定数UPPER_SNAKE_CASE
-7. **FSD依存方向** (frontend): 上位→下位のみ、同一レイヤー間参照なし
-8. **FC/IS依存方向** (backend): router→usecases→domain←adapters
+3. プロジェクトのスキル定義 (code-review) のチェックリストで検査
+4. 結果を以下のフォーマットで返す
 
 ## 出力フォーマット
 
