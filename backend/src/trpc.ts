@@ -1,7 +1,8 @@
 import { initTRPC } from "@trpc/server";
+import type { AppEnv } from "./env.js";
 
 export type TRPCContext = {
-  env: Env;
+  env: AppEnv;
 };
 
 const t = initTRPC.context<TRPCContext>().create();

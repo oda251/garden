@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "backend"
+    "backend",
+    "frontend"
   ],
   "scripts": {
     "lint": "oxlint --config .oxlintrc.json",
