@@ -12,9 +12,9 @@ Claude Code のカスタムエージェントの設計を管理する。
 
 | 名前 | 役割 | 参照 |
 |------|------|------|
-| pm | ユーザーとの窓口。タスクの規模を判断し planner / em に振り分け | `docs/SPEC.md` |
+| pm | ユーザーとの窓口。タスクの規模を判断し planner / tl に振り分け | `docs/SPEC.md` |
 | planner | タスクを sub-issues に分解 | `docs/SPEC.md` + `docs/ARCHITECTURE.md` |
-| em | PR を起点に実装ワークフローを管理 | — |
+| tl | PR を起点に実装ワークフローを管理 | — |
 | implementer | 規約に従った実装。レビュー指摘時は PR コメントを読んで修正 | `docs/ARCHITECTURE.md` + `docs/CODING_GUIDELINES.md` + PR |
 | cleanup | knip + similarity-ts による未使用コード・重複検出と修正 | — |
 | reviewer | 規約準拠のレビュー。結果を PR review として投稿 | `docs/ARCHITECTURE.md` + `docs/CODING_GUIDELINES.md` + PR |
@@ -25,7 +25,7 @@ Claude Code のカスタムエージェントの設計を管理する。
 pm (ユーザーとの窓口)
   ├── planner (タスクが大きい場合)
   │     └── GitHub sub-issues を作成
-  └── em (issue 単位)
+  └── tl (issue 単位)
         0. ブランチ作成 + draft PR 作成
         1. implementer — 実装 → コミット + プッシュ
         2. cleanup    — クリーンアップ → コミット + プッシュ

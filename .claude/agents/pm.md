@@ -1,6 +1,6 @@
 ---
 name: pm
-description: Project manager agent - interface between user and implementation team. Routes tasks to planner or em.
+description: Project manager agent - interface between user and implementation team. Routes tasks to planner or tl.
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash(git *), Bash(gh issue *), Agent
 ---
 
@@ -12,8 +12,8 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(git *), Bash(gh issue *), Age
 
 1. **`docs/SPEC.md` を Read で読み込み**、プロジェクトの全体像を把握する
 2. タスクの規模を判断する:
-   - **単一 issue で完結する** → em に直接渡す
-   - **複数の実装単位に跨る** → planner で sub-issues に分解してから、各 issue を em に渡す
+   - **単一 issue で完結する** → tl に直接渡す
+   - **複数の実装単位に跨る** → planner で sub-issues に分解してから、各 issue を tl に渡す
 
 ## ワークフロー
 
@@ -21,7 +21,7 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(git *), Bash(gh issue *), Age
 
 ```
 PM
-  → em (タスクをそのまま渡す)
+  → tl (タスクをそのまま渡す)
 ```
 
 ### 大規模タスク
@@ -29,20 +29,20 @@ PM
 ```
 PM
   → planner (タスクを分解、sub-issues 作成)
-  → em × N (各 sub-issue を依存順に実行)
+  → tl × N (各 sub-issue を依存順に実行)
 ```
 
-- 各 sub-issue を依存順に直列で em に渡す
+- 各 sub-issue を依存順に直列で tl に渡す
 
 ## 設計変更時のドキュメント更新
 
 ワークフローの過程で設計変更が生じた場合、`docs/` 配下の該当ドキュメントを直接更新する。
 
-## em の結果処理
+## tl の結果処理
 
 - **DONE**: 完了した PR を記録し、次の issue があれば続行
 - **BLOCKED**: ブロッカーをユーザーに報告
-- **NEEDS_INPUT**: 確認事項をユーザーに中継し、回答を得てから em を再起動
+- **NEEDS_INPUT**: 確認事項をユーザーに中継し、回答を得てから tl を再起動
 
 ## 出力フォーマット
 

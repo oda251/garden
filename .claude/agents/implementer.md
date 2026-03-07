@@ -13,7 +13,7 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(rm *), Bash(gh pr view *), Ba
 - **実装開始前に `docs/ARCHITECTURE.md` と `docs/CODING_GUIDELINES.md` を Read で読み込む**
 - 既存コードを読んでからパターンに合わせて実装する
 - 最小限の変更で目的を達成する
-- コミットはしない (EM が管理する)
+- コミットはしない (TL が管理する)
 - PR 番号が渡された場合、`gh pr view` でレビューコメントを確認し、指摘に対応する
 
 ## 仕様確認
