@@ -124,24 +124,3 @@ Sonner (toast) で操作結果をフィードバック。
 ### キャッシュ・楽観的更新
 
 tRPC (TanStack Query) のクエリキャッシュ + 楽観的更新 (`onMutate` で即時反映、`onError` でロールバック + toast)。
-
----
-
-## レビューチェックリスト
-
-変更対象の領域に該当する項目のみチェックする。
-
-### 共通
-
-1. **クラス禁止** — ライブラリ境界を除き、クラスではなくコンパニオンパターンを使用
-2. **型アサーション禁止** — `as` 禁止 (`as const` は許可)、Zodパースで型を確定させる
-3. **コンパニオンパターンの適用** — 型と同名のオブジェクトを定義し、`packages/schema/` に同居
-4. **命名規則の遵守** — ファイル: kebab-case、型: PascalCase、関数/変数: camelCase、定数: UPPER_SNAKE_CASE、Zodスキーマ: PascalCase+Schema、コンポーネント: PascalCase、hooks: `use`、ハンドラー: `handle`、boolean: `is`/`has`/`can`
-
-### バックエンド
-
-5. **neverthrow / try-catch** — `try-catch` はルートのみ、それ以外は `ResultAsync` チェーン
-
-### フロントエンド
-
-6. **Zustand の最小限使用** — サーバーデータ・URL表現可能な状態・ユーザー設定は loader/action/URL params/cookies で管理

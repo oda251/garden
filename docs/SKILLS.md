@@ -48,6 +48,6 @@ implement (オーケストレーター)
 ### reviewer
 
 - **目的**: コーディングルール準拠のレビュー
-- **参照**: `docs/CODING_GUIDELINES.md` のレビューチェックリストを Read で読み込み、変更差分を検査
-- **処理**: 機械的に修正できるものは自動修正
+- **参照**: `docs/CODING_GUIDELINES.md` を Read で読み込み、規約に基づきレビュー
+- **処理**: 機械的に修正できるものは自動修正、仕様判断が必要なものは報告のみ
 - **出力**: PASS / FIXED / NEEDS_INPUT

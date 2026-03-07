@@ -10,17 +10,17 @@ allowed-tools: Read, Edit, Glob, Grep, Bash(git diff *), Bash(git log *), Bash(g
 
 ## レビュー手順
 
-1. **`docs/CODING_GUIDELINES.md` を Read で読み込む** (特にレビューチェックリストのセクション)
+1. **`docs/CODING_GUIDELINES.md` を Read で読み込む**
 2. `git diff` で変更差分を取得
 3. 変更されたファイルの周辺コードを `Read` で確認
-4. レビューチェックリストに基づき検査
+4. コーディングガイドラインに基づき検査
 5. 機械的に修正できるものは自分で修正する
 6. 結果を以下のフォーマットで返す
 
 ## 自動修正する指摘 (判断不要)
 
 以下は確認なしに修正してよい:
-- 命名規則違反 (kebab-case, PascalCase 等)
+- 命名規則違反
 - `as` 型アサーション → Zodパースへの置換
 - `try-catch` → neverthrow パターンへの置換
 - `class` → コンパニオンパターンへの置換
