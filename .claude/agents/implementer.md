@@ -1,7 +1,7 @@
 ---
 name: implementer
 description: Implement features and fix bugs following project coding guidelines
-allowed-tools: Read, Edit, Write, Glob, Grep, Bash, NotebookEdit
+allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Bash(gh pr view *)
 ---
 
 # 実装エージェント
@@ -14,11 +14,11 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash, NotebookEdit
 - 既存コードを読んでからパターンに合わせて実装する
 - 最小限の変更で目的を達成する
 - コミットはしない (オーケストレーターが管理する)
+- PR 番号が渡された場合、`gh pr view` でレビューコメントを確認し、指摘に対応する
 
 ## 仕様確認
 
 実装中に仕様が不明確な点が出てきた場合、自己判断せず出力に含めること。
-以下の出力フォーマットに従う。
 
 ## 出力フォーマット
 
