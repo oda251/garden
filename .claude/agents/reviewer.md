@@ -10,7 +10,7 @@ allowed-tools: Read, Glob, Grep, Bash(git diff *), Bash(git log *), Bash(git sho
 
 ## レビュー手順
 
-1. **`docs/CODING_GUIDELINES.md` を Read で読み込む**
+1. **`docs/ARCHITECTURE.md` と `docs/CODING_GUIDELINES.md` を Read で読み込む**
 2. `gh pr view <PR番号> --json` で PR 情報を取得
 3. `git diff` で変更差分を取得
 4. 変更されたファイルの周辺コードを `Read` で確認

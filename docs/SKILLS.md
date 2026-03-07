@@ -13,11 +13,11 @@ Claude Code のカスタムエージェントの設計を管理する。
 | 名前 | 役割 | 参照 |
 |------|------|------|
 | pm | ユーザーとの窓口。タスクの規模を判断し planner / orchestrator に振り分け | `docs/SPEC.md` |
-| planner | タスクを sub-issues に分解 | `docs/SPEC.md` + `docs/CODING_GUIDELINES.md` |
+| planner | タスクを sub-issues に分解 | `docs/SPEC.md` + `docs/ARCHITECTURE.md` |
 | orchestrator | PR を起点に実装ワークフローを管理 | — |
-| implementer | 規約に従った実装。レビュー指摘時は PR コメントを読んで修正 | `docs/CODING_GUIDELINES.md` + PR |
+| implementer | 規約に従った実装。レビュー指摘時は PR コメントを読んで修正 | `docs/ARCHITECTURE.md` + `docs/CODING_GUIDELINES.md` + PR |
 | cleanup | knip + similarity-ts による未使用コード・重複検出と修正 | — |
-| reviewer | 規約準拠のレビュー。結果を PR review として投稿 | `docs/CODING_GUIDELINES.md` + PR |
+| reviewer | 規約準拠のレビュー。結果を PR review として投稿 | `docs/ARCHITECTURE.md` + `docs/CODING_GUIDELINES.md` + PR |
 
 ## ワークフロー
 

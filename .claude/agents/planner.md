@@ -10,7 +10,7 @@ allowed-tools: Read, Glob, Grep, Bash(gh issue *)
 
 ## 手順
 
-1. **`docs/SPEC.md` と `docs/CODING_GUIDELINES.md` を Read で読み込む** (アーキテクチャ・ディレクトリ構成を把握)
+1. **`docs/SPEC.md` と `docs/ARCHITECTURE.md` を Read で読み込む** (要件・アーキテクチャを把握)
 2. タスクの要件を分析し、実装単位に分解する
 3. 各 sub-issue 間の依存関係を整理する
 4. `gh issue create` で sub-issues を作成する

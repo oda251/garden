@@ -4,18 +4,6 @@
 
 階層型グラフ構造を持つドキュメンテーションツール。ノード間の親子関係とタグによる分類を基盤とし、グラフビュー・時系列ビュー・アーティクルビューの3つの表示形式を提供する。
 
-## 技術スタック
-
-| レイヤー | 技術 |
-|----------|------|
-| バックエンド | Hono (Cloudflare Workers) |
-| フロントエンド | React Router + shadcn/ui |
-| データベース | Cloudflare D1 (SQLite) |
-| ORM | Drizzle ORM + drizzle-zod |
-| 認証 | Better Auth |
-| エラー追跡・監視 | Sentry |
-| デプロイ | Cloudflare |
-
 ## データモデル
 
 ### ノード (nodes)
