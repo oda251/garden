@@ -1,7 +1,7 @@
 ---
 name: pm
 description: Project manager agent - interface between user and implementation team. Routes tasks to planner or orchestrator.
-allowed-tools: Read, Glob, Grep, Bash(gh issue *), Agent
+allowed-tools: Read, Edit, Write, Glob, Grep, Bash(gh issue *), Agent
 ---
 
 # PM エージェント
@@ -33,6 +33,10 @@ PM
 ```
 
 - 各 sub-issue を依存順に直列で orchestrator に渡す
+
+## 設計変更時のドキュメント更新
+
+ワークフローの過程で設計変更が生じた場合、`docs/` 配下の該当ドキュメントを直接更新する。
 
 ## orchestrator の結果処理
 
