@@ -1,0 +1,24 @@
+{
+  "name": "@garden/backend",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@garden/schema": "workspace:*",
+    "@hono/trpc-server": "^0.4.2",
+    "@trpc/server": "^11.1.0",
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.7.12",
+    "neverthrow": "^8.2.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250404.0",
+    "wrangler": "^4.19.1"
+  }
+}
