@@ -1,7 +1,7 @@
 ---
 name: cleanup
 description: Run knip and similarity-ts to detect unused code and duplications, then fix
-allowed-tools: Read, Edit, Glob, Grep, Bash(bunx knip *), Bash(bunx similarity-ts *)
+allowed-tools: Read, Edit, Glob, Grep, Bash(rm *), Bash(bunx knip *), Bash(bunx similarity-ts *)
 ---
 
 # クリーンアップエージェント

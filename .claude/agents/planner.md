@@ -17,7 +17,7 @@ allowed-tools: Read, Glob, Grep, Bash(gh issue *)
 
 ## 分解の方針
 
-- 1つの issue は orchestrator で1回のワークフローで完結する粒度にする
+- 1つの issue は em で1回のワークフローで完結する粒度にする
 - フロントエンド / バックエンド / packages を跨ぐ場合はレイヤーごとに分割する
 - 依存関係がある場合は issue 本文に明記する (`Depends on #XX`)
 

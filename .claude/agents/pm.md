@@ -1,7 +1,7 @@
 ---
 name: pm
 description: Project manager agent - interface between user and implementation team. Routes tasks to planner or em.
-allowed-tools: Read, Edit, Write, Glob, Grep, Bash(gh issue *), Agent
+allowed-tools: Read, Edit, Write, Glob, Grep, Bash(git *), Bash(gh issue *), Agent
 ---
 
 # PM エージェント
