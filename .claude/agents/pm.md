@@ -32,8 +32,7 @@ PM
   → orchestrator × N (各 sub-issue を依存順に実行)
 ```
 
-- 依存関係がない sub-issues は並列で orchestrator を起動してよい
-- 依存関係がある場合は依存先の完了を待ってから次を起動する
+- 各 sub-issue を依存順に直列で orchestrator に渡す
 
 ## orchestrator の結果処理
 
