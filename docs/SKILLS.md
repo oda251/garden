@@ -6,12 +6,13 @@ Claude Code のカスタムエージェントの設計を管理する。
 
 - **ドキュメント**: コーディング規約等、参照されるもの (`docs/CODING_GUIDELINES.md`)
 - **エージェント**: 必要なドキュメントを自ら読み込み、判断・実行する
-- **データソース**: エージェント間の情報共有は GitHub PR を唯一のデータソースとする
+- **データソース**: エージェント間の情報共有は GitHub (PR / issue) を唯一のデータソースとする
 
 ## エージェント
 
 | 名前 | 役割 | 参照 |
 |------|------|------|
+| pm | ユーザーとの窓口。タスクの規模を判断し planner / orchestrator に振り分け | `docs/SPEC.md` |
 | planner | タスクを sub-issues に分解 | `docs/SPEC.md` + `docs/CODING_GUIDELINES.md` |
 | orchestrator | PR を起点に実装ワークフローを管理 | — |
 | implementer | 規約に従った実装。レビュー指摘時は PR コメントを読んで修正 | `docs/CODING_GUIDELINES.md` + PR |
@@ -21,12 +22,15 @@ Claude Code のカスタムエージェントの設計を管理する。
 ## ワークフロー
 
 ```
-orchestrator
-  0. ブランチ作成 + draft PR 作成
-  1. implementer — 実装 → コミット + プッシュ
-  2. cleanup    — クリーンアップ → コミット + プッシュ
-  3. reviewer   — PR レビュー (approve or changes requested)
-     - PASS       → draft 解除、完了
-     - VIOLATIONS → 1 に戻り、implementer が PR レビューコメントを読んで修正
-     - NEEDS_INPUT → 呼び出し元に中継
+pm (ユーザーとの窓口)
+  ├── planner (タスクが大きい場合)
+  │     └── GitHub sub-issues を作成
+  └── orchestrator (issue 単位)
+        0. ブランチ作成 + draft PR 作成
+        1. implementer — 実装 → コミット + プッシュ
+        2. cleanup    — クリーンアップ → コミット + プッシュ
+        3. reviewer   — PR レビュー (approve or changes requested)
+           - PASS       → draft 解除、完了
+           - VIOLATIONS → 1 に戻り修正
+           - NEEDS_INPUT → PM 経由でユーザーに中継
 ```
