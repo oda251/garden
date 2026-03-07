@@ -1,14 +1,5 @@
 # Garden コーディング規約
 
-## インポート順序
-
-1. 外部ライブラリ
-2. `packages/` (共有パッケージ)
-3. 同一プロジェクト内の上位レイヤー → 下位レイヤー
-4. 同一ディレクトリ
-
----
-
 ## 型・構文のルール
 
 - **`interface` より `type` を優先**: `interface` は declaration merging が必要な場合のみ
@@ -33,6 +24,58 @@
 | React hooks | `use` プレフィックス | `useNodes` |
 | イベントハンドラー | `handle` プレフィックス | `handleNodeClick` |
 | boolean変数 | `is` / `has` / `can` プレフィックス | `isRoot` |
+
+---
+
+## インポート順序
+
+1. 外部ライブラリ
+2. `packages/` (共有パッケージ)
+3. 同一プロジェクト内の上位レイヤー → 下位レイヤー
+4. 同一ディレクトリ
+
+---
+
+## バックエンド
+
+### エラーハンドリング — neverthrow
+
+- `try-catch` はアプリケーションのルート (エントリポイント) でのみ使用
+- それ以外では `ResultAsync.fromPromise` → `.andThen` → `.match`
+- エラー型 `AppError` をコンパニオンパターンで定義 (`AppError.notFound()` 等)
+
+### キャッシュ
+
+Cloudflare Cache API でD1クエリ結果をエッジキャッシュ (TTL は Cache-Control で制御)。
+
+---
+
+## フロントエンド
+
+### 状態管理の使い分け
+
+| 状態の種類 | 管理方法 |
+|-----------|---------|
+| サーバーデータ | tRPC (TanStack Query) |
+| URL で表現できる状態 (フィルタ、ソート等) | URL params |
+| ユーザー設定 | cookies |
+| グラフ操作 (ズーム/パン/ドラッグ) | Zustand |
+
+### 楽観的更新
+
+mutation 時は `onMutate` でキャッシュを即時反映、`onError` でロールバック + Sonner toast でエラー通知。
+
+### フォーム
+
+React Hook Form + `@hookform/resolvers/zod` で `packages/dto/` の Zod スキーマをバリデーションに使用。
+
+---
+
+## packages/
+
+- DTO は Zod スキーマを `.pick()`, `.omit()`, `.extend()` 等で加工して生成
+- `refine` / `superRefine` によるビジネスバリデーションは `validation/` で一元管理
+- モックデータは `zod-schema-faker` で Zod スキーマから自動生成 (seed 対応で再現性あり)
 
 ---
 
