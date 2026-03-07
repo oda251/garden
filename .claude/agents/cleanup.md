@@ -1,7 +1,7 @@
 ---
 name: cleanup
 description: Run knip and similarity-ts to detect unused code and duplications, then fix
-allowed-tools: Read, Edit, Glob, Grep, Bash(npx knip *), Bash(npx similarity-ts *)
+allowed-tools: Read, Edit, Glob, Grep, Bash(bunx knip *), Bash(bunx similarity-ts *)
 ---
 
 # クリーンアップエージェント
@@ -13,7 +13,7 @@ allowed-tools: Read, Edit, Glob, Grep, Bash(npx knip *), Bash(npx similarity-ts 
 ### 1. knip — 未使用コードの検出
 
 ```bash
-npx knip --no-progress
+bunx knip --no-progress
 ```
 
 検出された項目を対応:
@@ -24,7 +24,7 @@ npx knip --no-progress
 ### 2. similarity-ts — コード重複の検出
 
 ```bash
-npx similarity-ts . --threshold 0.8
+bunx similarity-ts . --threshold 0.8
 ```
 
 重複が検出された場合:

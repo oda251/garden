@@ -9,10 +9,11 @@
 | レイヤー | 技術 |
 |----------|------|
 | バックエンド | Hono (Cloudflare Workers) |
-| フロントエンド | React Router |
+| フロントエンド | React Router + shadcn/ui |
 | データベース | Cloudflare D1 (SQLite) |
 | ORM | Drizzle ORM + drizzle-zod |
 | 認証 | Better Auth |
+| エラー追跡・監視 | Sentry |
 | デプロイ | Cloudflare |
 
 ## データモデル
@@ -24,7 +25,7 @@
 | カラム | 型 | 説明 |
 |--------|------|------|
 | id | TEXT (PK) | 一意識別子 (ULID等) |
-| parent_id | TEXT (FK → nodes.id, nullable) | 親ノードID。nullの場合はルートノード |
+| parent_id | TEXT (FK → nodes.id, nullable, ON DELETE CASCADE) | 親ノードID。nullの場合はルートノード |
 | title | TEXT NOT NULL | ノードのタイトル |
 | content | TEXT NOT NULL DEFAULT '' | Markdown形式の本文 |
 | created_by | TEXT (FK → users.id) | 作成者 |
@@ -118,32 +119,41 @@ Better Authが管理するユーザーテーブル。アプリケーション固
 
 ## API設計 (概要)
 
-ベースパス: `/api`
+### tRPC (`/trpc/*`)
 
-### ノード
+アプリケーションAPIはすべて tRPC で提供し、フロントエンドから型安全に呼び出す。
 
-| メソッド | パス | 説明 |
-|----------|------|------|
-| GET | /nodes | ノード一覧取得 (フィルタ: parent_id, tag, 期間) |
-| GET | /nodes/:id | ノード詳細取得 |
-| GET | /nodes/:id/children | 子ノード一覧取得 |
-| POST | /nodes | ノード作成 |
-| PUT | /nodes/:id | ノード更新 |
-| DELETE | /nodes/:id | ノード削除 |
+#### node ルーター
 
-### タグ
+| プロシージャ | 種別 | 説明 |
+|-------------|------|------|
+| node.list | query | ノード一覧取得 (フィルタ: parentId, tagId, 期間) |
+| node.getById | query | ノード詳細取得 |
+| node.getChildren | query | 子ノード一覧取得 |
+| node.create | mutation | ノード作成 |
+| node.update | mutation | ノード更新 |
+| node.delete | mutation | ノード削除 (子ノードもカスケード削除) |
 
-| メソッド | パス | 説明 |
-|----------|------|------|
-| GET | /tags | タグ一覧取得 |
-| POST | /tags | タグ作成 |
-| DELETE | /tags/:id | タグ削除 |
-| POST | /nodes/:id/tags | ノードにタグを付与 |
-| DELETE | /nodes/:id/tags/:tagId | ノードからタグを削除 |
+#### tag ルーター
 
-### 認証 (OIDC)
+| プロシージャ | 種別 | 説明 |
+|-------------|------|------|
+| tag.list | query | タグ一覧取得 |
+| tag.create | mutation | タグ作成 |
+| tag.delete | mutation | タグ削除 |
+| tag.addToNode | mutation | ノードにタグを付与 |
+| tag.removeFromNode | mutation | ノードからタグを削除 |
 
-Better Authが提供するエンドポイントを利用。
+#### admin ルーター
+
+| プロシージャ | 種別 | 説明 |
+|-------------|------|------|
+| admin.listUsers | query | ユーザー一覧取得 |
+| admin.updateUserRole | mutation | ユーザーロール変更 |
+
+### 非RPCルート (Hono)
+
+認証フローは Better Auth が提供する HTTP エンドポイントを Hono で直接ホストする。
 
 | メソッド | パス | 説明 |
 |----------|------|------|
@@ -151,10 +161,3 @@ Better Authが提供するエンドポイントを利用。
 | GET | /auth/callback/:provider | OIDCコールバック |
 | POST | /auth/sign-out | ログアウト |
 | GET | /auth/session | 現在のセッション情報取得 |
-
-### ユーザー管理 (admin)
-
-| メソッド | パス | 説明 |
-|----------|------|------|
-| GET | /admin/users | ユーザー一覧取得 |
-| PUT | /admin/users/:id/role | ユーザーロール変更 |

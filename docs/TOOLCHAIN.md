@@ -90,14 +90,76 @@ similarity-ts . --threshold 0.8
 
 ## テスト
 
-テストフレームワーク: **vitest**
+### 方針
 
-| 種別 | 対象 | 内容 |
-|------|------|------|
-| ユニットテスト | `packages/validation/` | バリデーションルールの検証 |
-| ユニットテスト | `backend/middleware/` | 認証・エラーハンドリングの検証 |
-| e2e | `backend/` | APIエンドポイントの結合テスト |
-| e2e | `frontend/` | ユーザーフローのE2Eテスト (Playwright) |
+- **Core はユニットテスト、Shell は上位テストでカバー** (FC/IS に準拠)
+- バックエンド単体の e2e は書かない。tRPC + Zod が境界を型で保証するため
+- カバレッジ閾値: **90%** (CI で計測し、下回ったら失敗)
+- テストファイルは対象ファイルの隣に配置 (コロケーション: `foo.ts` → `foo.test.ts`)
+
+### テスト構成
+
+| 種別 | フレームワーク | 対象 | 内容 |
+|------|--------------|------|------|
+| tRPC プロシージャテスト | vitest + Testcontainers (SQLite) | `backend/router/` | `createCaller` で プロシージャを呼び出し、実 DB で検証。usecases・adapters・Drizzle クエリを一括カバー |
+| ユニットテスト | vitest | `backend/middleware/` | 認証・CORS 等のミドルウェア単体検証 |
+| ユニットテスト | vitest | `packages/validation/` | refine / superRefine のビジネスバリデーション |
+| ユニットテスト | vitest | `packages/schema/` (コンパニオン) | `Node.isRoot()` 等のドメインロジック |
+| Playwright + MSW | Playwright | `frontend/` | UI の振る舞い・ユーザーフロー。バックエンド通信は MSW でモック |
+
+### 認証コンテキスト
+
+tRPC テストでは、ファクトリ関数で ctx を生成する。Better Auth の型推論をそのまま使い、Zod での二重検証はしない。
+
+```typescript
+// テスト用ファクトリ
+const asAdmin = () => ({ user: { id: "admin-1", role: "admin" }, session: { ... } });
+const asUser = (id = "user-1") => ({ user: { id, role: "user" }, session: { ... } });
+const asAnonymous = () => ({ user: null, session: null });
+
+// 使用例
+const caller = createCaller(asAdmin());
+const node = await caller.node.create({ title: "テスト" });
+
+const caller = createCaller(asAnonymous());
+await caller.node.create({ ... }); // → unauthorized
+```
+
+### テストデータ生成
+
+`packages/mock/` の zod-schema-faker を使用。seed 固定で再現性を担保する。
+
+```typescript
+import { generateMock } from "zod-schema-faker";
+import { InsertNodeSchema } from "@garden/schema";
+
+generateMock.seed(42);
+const mockNode = generateMock(InsertNodeSchema);
+```
+
+### 命名規則
+
+- `describe`: プロシージャ名またはモジュール名 (`"node.create"`, `"Node.isRoot"`)
+- `it`: 日本語で条件と期待結果を書く (`"親ノードが存在しない場合はエラーを返す"`)
+
+```typescript
+describe("node.create", () => {
+  it("タイトルとコンテンツを指定してノードを作成できる", async () => { ... });
+  it("未認証の場合は unauthorized を返す", async () => { ... });
+  it("親ノードが存在しない場合はエラーを返す", async () => { ... });
+});
+```
+
+---
+
+## エラー追跡・監視 — Sentry
+
+バックエンド (Cloudflare Workers) とフロントエンド両方に Sentry を導入する。
+
+- **バックエンド**: `@sentry/cloudflare` (Workers SDK)
+- **フロントエンド**: `@sentry/react`
+- neverthrow の Result チェーンで処理しきれなかった未処理例外を Sentry に送信
+- パフォーマンス監視 (トレース) も Sentry で一本化
 
 ---
 
@@ -111,8 +173,8 @@ steps:
   - oxfmt --check          # format check
   - oxlint --typecheck     # lint
   - bunx depcruise --cache --config .dependency-cruiser.cjs backend/ frontend/  # 依存方向チェック
-  - vitest run             # unit test + backend e2e
-  - playwright test        # frontend e2e
+  - vitest run --coverage  # unit test + tRPC プロシージャテスト (カバレッジ 90% 閾値)
+  - playwright test        # frontend Playwright + MSW
 ```
 
 ### CD (mainマージ時)
