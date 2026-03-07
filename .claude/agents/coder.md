@@ -1,5 +1,5 @@
 ---
-name: implementer
+name: coder
 description: Implement features and fix bugs following project coding guidelines
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash(rm *), Bash(gh pr view *), Bash(bun *), Bash(bunx *)
 ---
