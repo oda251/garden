@@ -4,12 +4,19 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "lint": "oxlint --config .oxlintrc.json",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  },
   "dependencies": {
     "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.8.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "oxfmt": "^0.36.0",
+    "oxlint": "^1.51.0",
     "typescript": "^5.9.3",
     "zod-schema-faker": "^2.1.0"
   }
