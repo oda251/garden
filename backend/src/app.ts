@@ -3,8 +3,9 @@ import { cors } from "hono/cors";
 import { trpcServer } from "@hono/trpc-server";
 import { appRouter } from "./router/index.js";
 import type { TRPCContext } from "./trpc.js";
+import type { AppEnv } from "./env.js";
 
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{ Bindings: AppEnv }>();
 
 app.use("*", cors());
 
