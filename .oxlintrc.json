@@ -1,0 +1,23 @@
+{
+  "plugins": ["typescript", "import", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "warn"
+  },
+  "rules": {
+    "typescript/no-unsafe-type-assertion": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-extraneous-class": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/await-thenable": "error",
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "no-console": "warn",
+    "eqeqeq": "error"
+  }
+}

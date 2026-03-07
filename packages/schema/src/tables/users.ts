@@ -11,7 +11,9 @@ export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: text("email_verified", { mode: "text" }).notNull().default("false"),
+  emailVerified: text("email_verified", { mode: "text" })
+    .notNull()
+    .default("false"),
   image: text("image"),
   role: text("role").notNull().default(ROLE.USER).$type<Role>(),
   createdAt: text("created_at").notNull(),
