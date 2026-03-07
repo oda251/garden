@@ -10,10 +10,10 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash, NotebookEdit
 
 ## 作業方針
 
+- **実装開始前に `docs/CODING_GUIDELINES.md` を Read で読み込む** (対象領域のセクションを重点的に)
 - 既存コードを読んでからパターンに合わせて実装する
 - 最小限の変更で目的を達成する
 - コミットはしない (オーケストレーターが管理する)
-- コーディングルールはプロジェクトのスキル定義 (frontend-coding, backend-coding) に従う
 
 ## 仕様確認
 

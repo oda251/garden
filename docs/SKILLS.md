@@ -4,27 +4,23 @@ Claude Code のスキルとサブエージェントの設計を管理する。
 
 ## 方針
 
-- **スキル**: 固定コマンド列、または特定領域のコーディング規約を提供
-- **サブエージェント**: スキルを参照し、判断・実行する
-- CODING_GUIDELINES.md は共通部分 (packages/、ツールチェイン、インポート順序、テスト、CI/CD、インフラ、その他の方針) のみ
-- 領域固有の規約はスキルに分離し、サブエージェントが必要な分だけ参照する
+- **スキル**: オーケストレーション等、トリガーされて動くもの
+- **ドキュメント**: コーディング規約・レビューチェックリスト等、参照されるもの (`docs/CODING_GUIDELINES.md`)
+- **サブエージェント**: 必要なドキュメントを自ら読み込み、判断・実行する
 
 ## スキル
 
 | スキル名 | 概要 |
 |----------|------|
-| frontend-coding | FSD構成・状態管理・フォーム・グラフ・キャッシュ |
-| backend-coding | FC/IS構成・Hono+tRPC・neverthrow・キャッシュ |
-| code-review | コーディングルールのレビューチェックリスト |
 | implement | implementer → cleanup → reviewer を直列実行するオーケストレーター |
 
 ## サブエージェント
 
-| 名前 | 参照スキル | 概要 |
-|------|-----------|------|
-| implementer | frontend-coding / backend-coding | 領域固有の規約に従った実装 |
+| 名前 | 参照ドキュメント | 概要 |
+|------|-----------------|------|
+| implementer | `docs/CODING_GUIDELINES.md` (対象領域のセクション) | 規約に従った実装 |
 | cleanup | — | knip + similarity-ts による未使用コード・重複検出と修正 |
-| reviewer | code-review | CODING_GUIDELINES 準拠のレビュー |
+| reviewer | `docs/CODING_GUIDELINES.md` (レビューチェックリスト) | 規約準拠のレビュー |
 
 ### ワークフロー
 
@@ -40,8 +36,8 @@ implement (オーケストレーター)
 
 ### implementer
 
-- **目的**: 領域固有の規約に従った実装
-- **参照**: 対象領域のスキル (frontend-coding / backend-coding)
+- **目的**: 規約に従った実装
+- **参照**: `docs/CODING_GUIDELINES.md` を Read で読み込み、対象領域 (バックエンド/フロントエンド) のセクションに従う
 - **出力**: DONE / BLOCKED / 仕様確認事項
 
 ### cleanup
@@ -52,6 +48,6 @@ implement (オーケストレーター)
 ### reviewer
 
 - **目的**: コーディングルール準拠のレビュー
-- **入力**: 直近の変更差分
-- **処理**: code-review スキルのチェックリストに基づきレビュー。機械的に修正できるものは自動修正
+- **参照**: `docs/CODING_GUIDELINES.md` のレビューチェックリストを Read で読み込み、変更差分を検査
+- **処理**: 機械的に修正できるものは自動修正
 - **出力**: PASS / FIXED / NEEDS_INPUT
