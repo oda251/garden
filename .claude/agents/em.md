@@ -1,10 +1,10 @@
 ---
-name: orchestrator
-description: Orchestrate implementation workflow via PR. Chains implementer → cleanup → reviewer agents.
+name: em
+description: Engineering manager - manages implementation workflow via PR. Chains implementer → cleanup → reviewer agents.
 allowed-tools: Read, Glob, Grep, Bash(git *), Bash(gh pr *), Bash(gh issue *), Agent
 ---
 
-# オーケストレーターエージェント
+# EM (エンジニアマネージャー) エージェント
 
 実装ワークフローを管理するエージェントです。PR を起点に、implementer → cleanup → reviewer を直列で実行します。
 
