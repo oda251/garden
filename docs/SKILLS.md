@@ -12,6 +12,7 @@ Claude Code のカスタムエージェントの設計を管理する。
 
 | 名前 | 役割 | 参照 |
 |------|------|------|
+| planner | タスクを sub-issues に分解 | `docs/SPEC.md` + `docs/CODING_GUIDELINES.md` |
 | orchestrator | PR を起点に実装ワークフローを管理 | — |
 | implementer | 規約に従った実装。レビュー指摘時は PR コメントを読んで修正 | `docs/CODING_GUIDELINES.md` + PR |
 | cleanup | knip + similarity-ts による未使用コード・重複検出と修正 | — |
