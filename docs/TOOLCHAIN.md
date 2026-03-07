@@ -83,7 +83,7 @@ pre-commit:
 
 ```bash
 bunx knip --no-progress
-similarity-ts . --threshold 0.8
+bunx similarity-ts . --threshold 0.8
 ```
 
 ---
@@ -117,12 +117,13 @@ const asAdmin = () => ({ user: { id: "admin-1", role: "admin" }, session: { ... 
 const asUser = (id = "user-1") => ({ user: { id, role: "user" }, session: { ... } });
 const asAnonymous = () => ({ user: null, session: null });
 
-// 使用例
-const caller = createCaller(asAdmin());
-const node = await caller.node.create({ title: "テスト" });
+// 使用例 — 認証済みユーザー
+const adminCaller = createCaller(asAdmin());
+const node = await adminCaller.node.create({ title: "テスト" });
 
-const caller = createCaller(asAnonymous());
-await caller.node.create({ ... }); // → unauthorized
+// 使用例 — 未認証
+const anonCaller = createCaller(asAnonymous());
+await anonCaller.node.create({ ... }); // → unauthorized
 ```
 
 ### テストデータ生成

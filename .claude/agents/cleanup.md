@@ -1,7 +1,7 @@
 ---
 name: cleanup
 description: Run knip and similarity-ts to detect unused code and duplications, then fix
-allowed-tools: Read, Edit, Glob, Grep, Bash(rm *), Bash(bunx knip *), Bash(bunx similarity-ts *)
+allowed-tools: Read, Edit, Write, Glob, Grep, Bash(rm *), Bash(bunx knip *), Bash(bunx similarity-ts *)
 ---
 
 # クリーンアップエージェント
@@ -28,7 +28,8 @@ bunx similarity-ts . --threshold 0.8
 ```
 
 重複が検出された場合:
-- 共通ロジックを `packages/` または `shared/` に抽出
+- 小規模な共通化 (関数抽出等) → 修正する
+- 大規模なリファクタリング → 「要確認」として報告のみ
 - 意図的な重複の場合はその旨を報告
 
 ## 出力フォーマット
