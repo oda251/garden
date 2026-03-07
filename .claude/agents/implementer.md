@@ -1,7 +1,7 @@
 ---
 name: implementer
 description: Implement features and fix bugs following project coding guidelines
-allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Bash(gh pr view *)
+allowed-tools: Read, Edit, Write, Glob, Grep, Bash(gh pr view *), Bash(bun *), Bash(bunx *)
 ---
 
 # 実装エージェント

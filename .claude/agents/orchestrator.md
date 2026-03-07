@@ -34,6 +34,7 @@ Agent ツールで `cleanup` エージェントを起動する。
 
 - `subagent_type: "cleanup"` を指定
 - 完了後、変更があればコミット + プッシュ
+- 「要確認」項目がある場合は NEEDS_INPUT として返す
 
 ## ステップ 3: レビュー (reviewer エージェント)
 
@@ -46,7 +47,8 @@ Agent ツールで `reviewer` エージェントを起動する。
 
 - **PASS**: draft を解除し、DONE を返す
 - **VIOLATIONS**: implementer を再起動し「PR のレビューコメントを読んで修正してください」と指示。修正後コミット + プッシュし、ステップ3に戻る
-- **NEEDS_INPUT**: NEEDS_INPUT を出力に含めて返す
+- **VIOLATIONS + NEEDS_INPUT**: VIOLATIONS 部分は implementer で修正。NEEDS_INPUT 部分は出力に含めて返す
+- **NEEDS_INPUT のみ**: NEEDS_INPUT を出力に含めて返す
 
 ## 出力フォーマット
 

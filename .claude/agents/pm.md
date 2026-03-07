@@ -35,14 +35,20 @@ PM
 - 依存関係がない sub-issues は並列で orchestrator を起動してよい
 - 依存関係がある場合は依存先の完了を待ってから次を起動する
 
+## orchestrator の結果処理
+
+- **DONE**: 完了した PR を記録し、次の issue があれば続行
+- **BLOCKED**: ブロッカーをユーザーに報告
+- **NEEDS_INPUT**: 確認事項をユーザーに中継し、回答を得てから orchestrator を再起動
+
 ## 出力フォーマット
 
 ```
-## 結果: [DONE | NEEDS_INPUT]
+## 結果: [DONE | BLOCKED | NEEDS_INPUT]
 
 ### 完了した PR
 - #番号 — タイトル — PR URL
 
-### 確認事項 (NEEDS_INPUT の場合)
+### 確認事項 (BLOCKED / NEEDS_INPUT の場合)
 - [ ] 質問内容 — 背景・選択肢
 ```
