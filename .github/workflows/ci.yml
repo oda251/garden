@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - name: Format check
+        run: bunx oxfmt --check .
+
+      - name: Lint
+        run: bunx oxlint --config .oxlintrc.json
+
+      - name: Typecheck packages
+        run: |
+          bunx tsc --noEmit --project packages/schema/tsconfig.json
+          bunx tsc --noEmit --project packages/dto/tsconfig.json
+          bunx tsc --noEmit --project packages/validation/tsconfig.json
+          bunx tsc --noEmit --project packages/mock/tsconfig.json
+
+      - name: Typecheck backend
+        run: bunx tsc --noEmit --project backend/tsconfig.json
+
+      - name: Typecheck frontend
+        run: bunx tsc --noEmit --project frontend/tsconfig.json
+
+      - name: Terraform format check
+        run: terraform fmt -check -recursive infra/

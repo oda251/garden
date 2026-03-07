@@ -6,3 +6,10 @@ dist/
 *.log
 .wrangler/
 .dev.vars
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.lock.hcl
