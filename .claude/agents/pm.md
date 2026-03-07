@@ -11,7 +11,9 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(git *), Bash(gh issue *), Age
 ## 判断基準
 
 1. **`docs/SPEC.md` を Read で読み込み**、プロジェクトの全体像を把握する
-2. タスクの規模を判断する:
+2. 既存の issue がある場合、内容の妥当性を確認する (仕様との矛盾、粒度の問題、依存関係の不整合など)
+   - 問題がある場合 → planner に issue の修正・整合性の調整を依頼する
+3. タスクの規模を判断する:
    - **単一 issue で完結する** → tl に直接渡す
    - **複数の実装単位に跨る** → planner で sub-issues に分解してから、各 issue を tl に渡す
 
