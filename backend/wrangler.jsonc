@@ -1,0 +1,12 @@
+{
+  "name": "garden-backend",
+  "main": "src/app.ts",
+  "compatibility_date": "2025-04-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "garden-db",
+      "database_id": "placeholder-id",
+    },
+  ],
+}
