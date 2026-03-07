@@ -172,6 +172,7 @@ describe("node.create", () => {
 steps:
   - oxfmt --check          # format check
   - oxlint --typecheck     # lint
+  - terraform fmt -check -recursive infra/  # Terraform format check
   - bunx depcruise --cache --config .dependency-cruiser.cjs backend/ frontend/  # 依存方向チェック
   - vitest run --coverage  # unit test + tRPC プロシージャテスト (カバレッジ 90% 閾値)
   - playwright test        # frontend Playwright + MSW
@@ -202,3 +203,12 @@ infra/
 ```
 
 Terraform providers: `cloudflare/cloudflare`, `integrations/github`
+
+### Formatter — terraform fmt
+
+```bash
+terraform fmt -recursive infra/
+```
+
+- CI では `terraform fmt -check -recursive infra/` で未フォーマットを検出
+- pre-commit (lefthook) でも自動フォーマットを実行
