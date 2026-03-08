@@ -21,7 +21,7 @@ jobs:
         run: bunx oxfmt --check packages/ backend/ frontend/
 
       - name: Lint
-        run: bunx oxlint --config .oxlintrc.json packages/ backend/ frontend/
+        run: bunx oxlint --config .oxlintrc.json --type-check packages/ backend/ frontend/
 
       - name: Typecheck packages
         run: |
@@ -34,6 +34,9 @@ jobs:
 
       - name: Typecheck frontend
         run: bunx tsc --noEmit --project frontend/tsconfig.json
+
+      - name: Dependency direction check
+        run: bunx depcruise --config .dependency-cruiser.cjs backend/ frontend/ packages/
 
       - uses: hashicorp/setup-terraform@v3
 

@@ -6,7 +6,7 @@
     {
       "binding": "DB",
       "database_name": "garden-db",
-      "database_id": "placeholder-id",
+      "database_id": "${DATABASE_ID}",
     },
   ],
 }
