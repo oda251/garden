@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { UserSelectSchema } from "@garden/schema";
-import type { Role } from "@garden/schema";
+import { UserSelectSchema, ROLE } from "@garden/schema";
 
 export const UpdateUserRoleDto = z.object({
   userId: z.string(),
-  role: z.custom<Role>(),
+  role: z.enum([ROLE.ADMIN, ROLE.USER]),
 });
 
 export type UpdateUserRoleDto = z.infer<typeof UpdateUserRoleDto>;
