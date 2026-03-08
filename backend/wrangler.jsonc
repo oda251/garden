@@ -6,7 +6,8 @@
     {
       "binding": "DB",
       "database_name": "garden-db",
-      "database_id": "placeholder-id",
+      // CD で secrets.D1_DATABASE_ID から注入される
+      "database_id": "D1_DATABASE_ID",
     },
   ],
 }

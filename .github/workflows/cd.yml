@@ -17,6 +17,9 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      - name: Inject D1 database ID
+        run: sed -i 's/"D1_DATABASE_ID"/"${{ secrets.D1_DATABASE_ID }}"/' backend/wrangler.jsonc
+
       - name: Deploy backend
         run: bunx wrangler deploy
         working-directory: backend
