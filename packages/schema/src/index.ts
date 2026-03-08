@@ -1,5 +1,5 @@
-export { users, nodes, tags, nodeTags, ROLE } from "./tables/index.js";
-export type { Role } from "./tables/index.js";
+export { users, nodes, tags, nodeTags, ROLE } from "./tables/index";
+export type { Role } from "./tables/index";
 
 export {
   NodeSelectSchema,
@@ -10,6 +10,6 @@ export {
   TagInsertSchema,
   NodeTagSelectSchema,
   NodeTagInsertSchema,
-} from "./zod/index.js";
+} from "./zod/index";
 
-export { Node, User } from "./companions/index.js";
+export { Node, User } from "./companions/index";

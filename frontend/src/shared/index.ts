@@ -1,1 +1,1 @@
-export { trpc } from "./api/index.js";
+export { trpc } from "./api/index";

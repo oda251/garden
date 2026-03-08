@@ -1,1 +1,1 @@
-export { CreateNodeValidation } from "./node.js";
+export { CreateNodeValidation } from "./node";

@@ -1,6 +1,6 @@
 import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { users } from "./users.js";
+import { users } from "./users";
 
 export const nodes = sqliteTable("nodes", {
   id: text("id").primaryKey(),

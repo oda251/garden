@@ -1,6 +1,6 @@
 import { primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { nodes } from "./nodes.js";
-import { tags } from "./tags.js";
+import { nodes } from "./nodes";
+import { tags } from "./tags";
 
 export const nodeTags = sqliteTable(
   "node_tags",

@@ -1,5 +1,5 @@
 import { initTRPC } from "@trpc/server";
-import type { AppEnv } from "./env.js";
+import type { AppEnv } from "./env";
 
 export type TRPCContext = {
   env: AppEnv;

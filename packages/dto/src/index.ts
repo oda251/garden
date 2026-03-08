@@ -1,18 +1,18 @@
-export { CreateNodeDto, UpdateNodeDto, NodeResponseDto } from "./node.js";
+export { CreateNodeDto, UpdateNodeDto, NodeResponseDto } from "./node";
 export type {
   CreateNodeDto as CreateNodeDtoType,
   UpdateNodeDto as UpdateNodeDtoType,
   NodeResponseDto as NodeResponseDtoType,
-} from "./node.js";
+} from "./node";
 
-export { CreateTagDto, TagResponseDto } from "./tag.js";
+export { CreateTagDto, TagResponseDto } from "./tag";
 export type {
   CreateTagDto as CreateTagDtoType,
   TagResponseDto as TagResponseDtoType,
-} from "./tag.js";
+} from "./tag";
 
-export { UpdateUserRoleDto, UserResponseDto } from "./user.js";
+export { UpdateUserRoleDto, UserResponseDto } from "./user";
 export type {
   UpdateUserRoleDto as UpdateUserRoleDtoType,
   UserResponseDto as UserResponseDtoType,
-} from "./user.js";
+} from "./user";

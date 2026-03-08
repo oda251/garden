@@ -1,6 +1,6 @@
-import { router } from "../trpc.js";
-import { nodeRouter } from "./node.js";
-import { tagRouter } from "./tag.js";
+import { router } from "../trpc";
+import { nodeRouter } from "./node";
+import { tagRouter } from "./tag";
 
 export const appRouter = router({
   node: nodeRouter,

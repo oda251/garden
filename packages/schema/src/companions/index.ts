@@ -1,2 +1,2 @@
-export { Node } from "./node.js";
-export { User } from "./user.js";
+export { Node } from "./node";
+export { User } from "./user";

@@ -1,4 +1,4 @@
-export { NodeSelectSchema, NodeInsertSchema } from "./nodes.js";
-export { UserSelectSchema, UserInsertSchema } from "./users.js";
-export { TagSelectSchema, TagInsertSchema } from "./tags.js";
-export { NodeTagSelectSchema, NodeTagInsertSchema } from "./node-tags.js";
+export { NodeSelectSchema, NodeInsertSchema } from "./nodes";
+export { UserSelectSchema, UserInsertSchema } from "./users";
+export { TagSelectSchema, TagInsertSchema } from "./tags";
+export { NodeTagSelectSchema, NodeTagInsertSchema } from "./node-tags";

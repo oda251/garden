@@ -1,5 +1,5 @@
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
-import { nodeTags } from "../tables/node-tags.js";
+import { nodeTags } from "../tables/node-tags";
 
 export const NodeTagSelectSchema = createSelectSchema(nodeTags);
 
