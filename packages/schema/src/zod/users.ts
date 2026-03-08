@@ -1,5 +1,12 @@
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
-import { users } from "../tables/users.js";
+import { z } from "zod";
+import { users, ROLE } from "../tables/users.js";
+
+const roleValues = Object.values(ROLE) as [string, ...string[]];
+
+export const isValidRole = (value: string) => roleValues.includes(value);
+
+export const RoleSchema = z.enum(roleValues);
 
 export const UserSelectSchema = createSelectSchema(users);
 

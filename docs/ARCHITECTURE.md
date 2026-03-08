@@ -16,4 +16,6 @@
 
 - Drizzle テーブル定義 + drizzle-zod が唯一の型定義元
 - 型のコンパニオンパターンも `schema/` に同居させる
-- 依存方向: `validation → dto → schema`、`mock → schema`
+- バリデーション (refine/superRefine) は `schema/` に同居させ、ロジックは純粋関数として export する
+- DTO は検証済み schema から `.pick()` / `.omit()` / `.extend()` で派生
+- 依存方向: `dto → schema`、`mock → schema`
