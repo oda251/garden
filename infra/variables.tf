@@ -18,6 +18,7 @@ variable "github_token" {
 variable "github_owner" {
   description = "GitHub repository owner"
   type        = string
+  default     = "oda251"
 }
 
 variable "project_name" {

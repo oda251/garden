@@ -1,6 +1,13 @@
 terraform {
   required_version = ">= 1.0"
 
+  cloud {
+    organization = "personal-yoda"
+    workspaces {
+      name = "garden"
+    }
+  }
+
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
@@ -19,5 +26,4 @@ provider "cloudflare" {
 
 provider "github" {
   token = var.github_token
-  owner = var.github_owner
 }

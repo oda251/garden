@@ -19,3 +19,15 @@ resource "github_branch_protection" "main" {
 
   enforce_admins = false
 }
+
+resource "github_actions_secret" "cloudflare_api_token" {
+  repository      = "${var.github_owner}/${var.project_name}"
+  secret_name     = "CLOUDFLARE_API_TOKEN"
+  plaintext_value = var.cloudflare_api_token
+}
+
+resource "github_actions_secret" "cloudflare_d1_database_id" {
+  repository      = "${var.github_owner}/${var.project_name}"
+  secret_name     = "CLOUDFLARE_D1_DATABASE_ID"
+  plaintext_value = cloudflare_d1_database.main.id
+}
