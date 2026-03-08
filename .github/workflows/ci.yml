@@ -36,5 +36,10 @@ jobs:
       - name: Typecheck frontend
         run: bunx tsc --noEmit --project frontend/tsconfig.json
 
+      - name: Dependency direction check
+        run: bunx depcruise --cache --config .dependency-cruiser.cjs backend/ frontend/
+
+      - uses: hashicorp/setup-terraform@v3
+
       - name: Terraform format check
         run: terraform fmt -check -recursive infra/
