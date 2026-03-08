@@ -1,0 +1,30 @@
+name: リファクタリング提案
+description: エージェントが作業中に発見したリファクタリング提案
+labels: ["refactoring"]
+body:
+  - type: input
+    id: agent
+    attributes:
+      label: 発見元エージェント
+      placeholder: "coder / reviewer / qa"
+    validations:
+      required: true
+  - type: input
+    id: task
+    attributes:
+      label: 作業内容
+      description: 発見時に取り組んでいたタスクの概要
+    validations:
+      required: true
+  - type: input
+    id: pr
+    attributes:
+      label: 関連 PR
+      placeholder: "#番号"
+  - type: textarea
+    id: description
+    attributes:
+      label: 内容
+      description: リファクタリングの対象と理由
+    validations:
+      required: true

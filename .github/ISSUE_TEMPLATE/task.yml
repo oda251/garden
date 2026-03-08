@@ -1,0 +1,28 @@
+name: タスク
+description: 通常の issue
+labels: ["task"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: タスクの目的と背景
+    validations:
+      required: true
+  - type: textarea
+    id: requirements
+    attributes:
+      label: 要件
+      description: 達成すべき条件をリストで記述
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 対象範囲
+      description: 変更が想定されるファイル・パッケージ
+  - type: textarea
+    id: notes
+    attributes:
+      label: 備考
+      description: 依存関係や注意事項

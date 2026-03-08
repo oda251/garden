@@ -19,3 +19,21 @@
 - バリデーション (refine/superRefine) は `schema/` に同居させ、ロジックは純粋関数として export する
 - DTO は検証済み schema から `.pick()` / `.omit()` / `.extend()` で派生
 - 依存方向: `dto → schema`、`mock → schema`
+
+## テスト
+
+### 方針
+
+- **Core はユニットテスト、Shell は上位テストでカバー** (FC/IS に準拠)
+- バックエンド単体の e2e は書かない。tRPC + Zod が境界を型で保証するため
+- カバレッジ閾値: **90%** (CI で計測し、下回ったら失敗)
+- テストファイルは対象ファイルの隣に配置 (コロケーション: `foo.ts` → `foo.test.ts`)
+
+### 構成
+
+| 種別 | フレームワーク | 対象 | 内容 |
+|------|--------------|------|------|
+| tRPC プロシージャテスト | vitest + Testcontainers (SQLite) | `backend/router/` | `createCaller` でプロシージャを呼び出し、実 DB で検証。usecases・adapters・Drizzle クエリを一括カバー |
+| ユニットテスト | vitest | `backend/middleware/` | 認証・CORS 等のミドルウェア単体検証 |
+| ユニットテスト | vitest | `packages/schema/` | コンパニオン (`Node.isRoot()` 等) + バリデーションロジック |
+| Playwright + MSW | Playwright | `frontend/` | UI の振る舞い・ユーザーフロー。バックエンド通信は MSW でモック |
