@@ -85,14 +85,6 @@
       "name": "@garden/schema",
       "version": "0.0.1",
     },
-    "packages/validation": {
-      "name": "@garden/validation",
-      "version": "0.0.1",
-      "dependencies": {
-        "@garden/dto": "workspace:*",
-        "@garden/schema": "workspace:*",
-      },
-    },
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
@@ -236,8 +228,6 @@
     "@garden/mock": ["@garden/mock@workspace:packages/mock"],
 
     "@garden/schema": ["@garden/schema@workspace:packages/schema"],
-
-    "@garden/validation": ["@garden/validation@workspace:packages/validation"],
 
     "@hono/trpc-server": ["@hono/trpc-server@0.4.2", "", { "peerDependencies": { "@trpc/server": "^10.10.0 || >11.0.0-rc", "hono": ">=4.0.0" } }, "sha512-3TDrc42CZLgcTFkXQba+y7JlRWRiyw1AqhLqztWyNS2IFT+3bHld0lxKdGBttCtGKHYx0505dM67RMazjhdZqw=="],
 
