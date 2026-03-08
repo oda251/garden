@@ -15,7 +15,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@garden/dto": "workspace:*",
-    "@garden/schema": "workspace:*"
+    "@garden/dto": "workspace:*"
   }
 }
