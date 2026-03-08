@@ -21,7 +21,7 @@ jobs:
         run: bunx oxfmt --check .
 
       - name: Lint
-        run: bunx oxlint --config .oxlintrc.json
+        run: bunx oxlint --config .oxlintrc.json --typecheck
 
       - name: Typecheck packages
         run: |

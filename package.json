@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "prepare": "lefthook install",
-    "lint": "oxlint --config .oxlintrc.json",
+    "lint": "oxlint --config .oxlintrc.json --typecheck",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check ."
   },

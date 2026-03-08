@@ -6,7 +6,7 @@ pre-commit:
       stage_fixed: true
     lint:
       glob: "*.{ts,tsx,js,jsx}"
-      run: bunx oxlint --config .oxlintrc.json {staged_files}
+      run: bunx oxlint --config .oxlintrc.json --typecheck {staged_files}
     terraform-fmt:
       glob: "*.tf"
       run: terraform fmt -recursive infra/
