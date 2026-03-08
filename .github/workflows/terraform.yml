@@ -18,7 +18,7 @@ jobs:
       run:
         working-directory: infra
     env:
-      TF_CLOUD_ORGANIZATION: personal-yoda
+      TF_CLOUD_ORGANIZATION: oda251
       TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4

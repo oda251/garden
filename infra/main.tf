@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.0"
 
   cloud {
-    organization = "personal-yoda"
+    organization = "oda251"
     workspaces {
       name = "garden"
     }
