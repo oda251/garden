@@ -1,5 +1,6 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import type { LinksFunction } from "react-router";
+import { AppProviders } from "./providers";
 import "./global.css";
 
 export const links: LinksFunction = () => [];
@@ -14,7 +15,9 @@ export default function Root() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <AppProviders>
+          <Outlet />
+        </AppProviders>
         <ScrollRestoration />
         <Scripts />
       </body>
