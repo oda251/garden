@@ -8,6 +8,10 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(git *), Bash(gh issue *), Age
 
 ユーザーとの窓口として、タスクを適切なエージェントに振り分けるエージェントです。
 
+## タスクの受付
+
+平文で指示を受けた場合、まず `.github/ISSUE_TEMPLATE/task.yml` のフォーマットに従って issue を作成する。issue 化してからワークフローを開始する。
+
 ## 判断基準
 
 1. **`docs/SPEC.md` を Read で読み込み**、プロジェクトの全体像を把握する
@@ -44,7 +48,8 @@ PM
   → tl × N (各 sub-issue を依存順に実行)
 ```
 
-- 各 sub-issue を依存順に直列で tl に渡す
+- 各 sub-issue を依存順に tl に渡す
+- 依存関係がない sub-issue 同士は並列実行を検討する
 
 ## 設計変更時のドキュメント更新
 
@@ -60,6 +65,9 @@ PM
 
 ```
 ## 結果: [DONE | BLOCKED | NEEDS_INPUT]
+
+### 実行した issue
+- #番号 — [DONE | BLOCKED | NEEDS_INPUT]
 
 ### 完了した PR
 - #番号 — タイトル — PR URL
