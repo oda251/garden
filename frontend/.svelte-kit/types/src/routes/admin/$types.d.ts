@@ -8,7 +8,7 @@ type MatcherParam<M> = M extends ((param: string) => param is infer U)
     : string
   : string;
 type RouteParams = {};
-type RouteId = "/graph";
+type RouteId = "/admin";
 type MaybeWithVoid<T> = {} extends T ? T | void : T;
 export type RequiredKeys<T> = {
   [K in keyof T]-?: {} extends { [P in K]: T[K] } ? never : K;

@@ -26,8 +26,16 @@ type OptionalUnion<
 export type Snapshot<T = any> = Kit.Snapshot<T>;
 type PageServerParentData = EnsureDefined<LayoutServerData>;
 type PageParentData = EnsureDefined<LayoutData>;
-type LayoutRouteId = RouteId | "/" | "/graph" | "/login" | "/timeline" | null;
-type LayoutParams = RouteParams & {};
+type LayoutRouteId =
+  | RouteId
+  | "/"
+  | "/admin"
+  | "/article/[id]"
+  | "/graph"
+  | "/login"
+  | "/timeline"
+  | null;
+type LayoutParams = RouteParams & { id?: string };
 type LayoutServerParentData = EnsureDefined<{}>;
 type LayoutParentData = EnsureDefined<{}>;
 

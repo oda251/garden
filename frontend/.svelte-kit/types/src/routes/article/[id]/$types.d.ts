@@ -7,8 +7,8 @@ type MatcherParam<M> = M extends ((param: string) => param is infer U)
     ? U
     : string
   : string;
-type RouteParams = {};
-type RouteId = "/graph";
+type RouteParams = { id: string };
+type RouteId = "/article/[id]";
 type MaybeWithVoid<T> = {} extends T ? T | void : T;
 export type RequiredKeys<T> = {
   [K in keyof T]-?: {} extends { [P in K]: T[K] } ? never : K;
@@ -25,10 +25,13 @@ type OptionalUnion<
 > = U extends unknown ? { [P in Exclude<A, keyof U>]?: never } & U : never;
 export type Snapshot<T = any> = Kit.Snapshot<T>;
 type PageServerParentData = EnsureDefined<
-  import("../$types.js").LayoutServerData
+  import("../../$types.js").LayoutServerData
 >;
-type PageParentData = EnsureDefined<import("../$types.js").LayoutData>;
+type PageParentData = EnsureDefined<import("../../$types.js").LayoutData>;
 
+export type EntryGenerator = () =>
+  | Promise<Array<RouteParams>>
+  | Array<RouteParams>;
 export type PageServerLoad<
   OutputData extends OutputDataShape<PageServerParentData> =
     OutputDataShape<PageServerParentData>,

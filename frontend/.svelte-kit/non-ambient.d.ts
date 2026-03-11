@@ -31,17 +31,33 @@ export {};
 
 declare module "$app/types" {
   export interface AppTypes {
-    RouteId(): "/" | "/admin" | "/article" | "/graph" | "/login" | "/timeline";
-    RouteParams(): {};
+    RouteId():
+      | "/"
+      | "/admin"
+      | "/article"
+      | "/article/[id]"
+      | "/graph"
+      | "/login"
+      | "/timeline";
+    RouteParams(): {
+      "/article/[id]": { id: string };
+    };
     LayoutParams(): {
-      "/": Record<string, never>;
+      "/": { id?: string };
       "/admin": Record<string, never>;
-      "/article": Record<string, never>;
+      "/article": { id?: string };
+      "/article/[id]": { id: string };
       "/graph": Record<string, never>;
       "/login": Record<string, never>;
       "/timeline": Record<string, never>;
     };
-    Pathname(): "/" | "/graph" | "/login" | "/timeline";
+    Pathname():
+      | "/"
+      | "/admin"
+      | (`/article/${string}` & {})
+      | "/graph"
+      | "/login"
+      | "/timeline";
     ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes["Pathname"]>}`;
     Asset(): string & {};
   }
