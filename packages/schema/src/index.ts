@@ -1,4 +1,13 @@
-export { users, nodes, tags, nodeTags, ROLE } from "./tables/index.js";
+export {
+  users,
+  nodes,
+  tags,
+  nodeTags,
+  sessions,
+  accounts,
+  verifications,
+  ROLE,
+} from "./tables/index.js";
 export type { Role } from "./tables/index.js";
 
 export {
