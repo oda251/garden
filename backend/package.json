@@ -17,12 +17,15 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "@garden/dto": "workspace:*",
     "@garden/schema": "workspace:*",
     "@hono-rate-limiter/cloudflare": "^0.2.2",
+    "@hono/zod-validator": "^0.7.6",
     "better-auth": "^1.5.4",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.7.12",
     "neverthrow": "^8.2.0",
+    "ulid": "^3.0.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
