@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "story:dev": "histoire dev",
-    "story:build": "histoire build"
+    "story:build": "histoire build",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@garden/backend": "workspace:*",
@@ -39,6 +41,7 @@
     "@cloudflare/workers-types": "^4.20260307.1",
     "@histoire/plugin-svelte": "^1.0.0-beta.1",
     "@internationalized/date": "^3.10.0",
+    "@playwright/test": "^1.58.2",
     "@sveltejs/adapter-cloudflare": "^7.2.8",
     "@sveltejs/kit": "^2.21.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
