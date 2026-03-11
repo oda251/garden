@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { LayoutServerLoad } from "./$types";
 
 type SessionData = {
@@ -9,7 +10,7 @@ type SessionData = {
   };
 } | null;
 
-export const load: LayoutServerLoad = async ({ fetch }) => {
+export const load = async ({ fetch }: Parameters<LayoutServerLoad>[0]) => {
   const response = await fetch("/api/auth/get-session", {
     headers: { accept: "application/json" },
   });

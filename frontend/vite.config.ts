@@ -1,11 +1,7 @@
-import { reactRouter } from "@react-router/dev/vite";
+import tailwindcss from "@tailwindcss/vite";
+import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [reactRouter()],
-  resolve: {
-    alias: {
-      "~": "/src",
-    },
-  },
+  plugins: [tailwindcss(), sveltekit()],
 });

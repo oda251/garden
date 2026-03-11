@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "prepare": "lefthook install",
-    "lint": "oxlint --config .oxlintrc.json",
+    "lint": "oxlint --config .oxlintrc.json --ignore-pattern 'frontend/.svelte-kit/**' packages/ backend/ frontend/src/",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check ."
   },
