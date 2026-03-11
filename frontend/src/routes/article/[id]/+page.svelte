@@ -2,13 +2,18 @@
   import { renderMarkdown } from "$lib/markdown";
   import { Button } from "$lib/components/ui/button";
   import { NodeEditForm, NodeDeleteDialog } from "$lib/components/node";
+  import { NodeTagManager } from "$lib/components/tag";
+  import ChevronRight from "@lucide/svelte/icons/chevron-right";
   import Pencil from "@lucide/svelte/icons/pencil";
   import Trash2 from "@lucide/svelte/icons/trash-2";
-  import type { NodeResponse } from "$lib/api/types";
+  import type { NodeResponse, TagResponse } from "$lib/api/types";
 
   type PageData = {
     node: NodeResponse;
     children: NodeResponse[];
+    ancestors: NodeResponse[];
+    nodeTags: TagResponse[];
+    allTags: TagResponse[];
     session: { user: { id: string; role: string } } | null;
   };
 
@@ -38,6 +43,21 @@
 </script>
 
 <div class="mx-auto max-w-3xl">
+  {#if data.ancestors.length > 0}
+    <nav class="mb-4 flex items-center gap-1 text-sm">
+      {#each data.ancestors as ancestor (ancestor.id)}
+        <a
+          href="/article/{ancestor.id}"
+          class="text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {ancestor.title}
+        </a>
+        <ChevronRight class="text-muted-foreground h-3.5 w-3.5" />
+      {/each}
+      <span class="font-medium">{data.node.title}</span>
+    </nav>
+  {/if}
+
   <article class="space-y-6">
     <header class="flex items-start justify-between">
       <div>
@@ -73,6 +93,14 @@
         </div>
       {/if}
     </header>
+
+    <div>
+      <NodeTagManager
+        nodeId={data.node.id}
+        assignedTags={data.nodeTags}
+        allTags={data.allTags}
+      />
+    </div>
 
     {#if data.children.length > 0}
       <nav class="border-border rounded-lg border p-4">
