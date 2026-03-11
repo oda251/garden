@@ -29,7 +29,7 @@
       }
     },
     {
-      "files": ["frontend/src/lib/components/ui/**/*.svelte"],
+      "files": ["frontend/**/*.svelte"],
       "rules": {
         "prefer-const": "off"
       }
