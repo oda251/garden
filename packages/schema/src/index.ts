@@ -12,6 +12,7 @@ export type { Role } from "./tables/index.js";
 
 export {
   NodeSelectSchema,
+  NodeInsertBaseSchema,
   NodeInsertSchema,
   isNonBlankTitle,
   UserSelectSchema,
