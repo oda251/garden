@@ -37,24 +37,6 @@ export const tagRouter = new Hono<TagEnv>()
 
     return c.json(newTag, 201);
   })
-  .delete("/:id", requireAuth, async (c) => {
-    const db = c.get("db");
-    const tagId = c.req.param("id");
-
-    const existing = await db
-      .select()
-      .from(tags)
-      .where(eq(tags.id, tagId))
-      .limit(1);
-
-    if (!existing[0]) {
-      return c.json({ code: "NOT_FOUND", message: "Tag not found" }, 404);
-    }
-
-    await db.delete(tags).where(eq(tags.id, tagId));
-
-    return c.json({ success: true });
-  })
   .post("/node", requireAuth, zValidator("json", nodeTagSchema), async (c) => {
     const db = c.get("db");
     const { nodeId, tagId } = c.req.valid("json");
@@ -77,4 +59,22 @@ export const tagRouter = new Hono<TagEnv>()
 
       return c.json({ success: true });
     },
-  );
+  )
+  .delete("/:id", requireAuth, async (c) => {
+    const db = c.get("db");
+    const tagId = c.req.param("id");
+
+    const existing = await db
+      .select()
+      .from(tags)
+      .where(eq(tags.id, tagId))
+      .limit(1);
+
+    if (!existing[0]) {
+      return c.json({ code: "NOT_FOUND", message: "Tag not found" }, 404);
+    }
+
+    await db.delete(tags).where(eq(tags.id, tagId));
+
+    return c.json({ success: true });
+  });
