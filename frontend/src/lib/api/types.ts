@@ -8,6 +8,11 @@ export type NodeResponse = {
   updatedAt: string;
 };
 
+export type TagResponse = {
+  id: string;
+  name: string;
+};
+
 export type UserResponse = {
   id: string;
   name: string;
