@@ -5,6 +5,8 @@ import {
   errorHandler,
   dbMiddleware,
   authSetupMiddleware,
+  secureHeadersMiddleware,
+  csrfMiddleware,
 } from "./middleware/index.js";
 import { authMiddleware } from "./auth/index.js";
 import type { AppEnv, AppVariables } from "./env.js";
@@ -13,7 +15,9 @@ const app = new Hono<{ Bindings: AppEnv; Variables: AppVariables }>();
 
 app.onError(errorHandler);
 
+app.use("*", secureHeadersMiddleware);
 app.use("*", cors());
+app.use("*", csrfMiddleware);
 app.use("*", dbMiddleware);
 app.use("*", authSetupMiddleware);
 
