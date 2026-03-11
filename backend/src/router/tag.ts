@@ -37,6 +37,18 @@ export const tagRouter = new Hono<TagEnv>()
 
     return c.json(newTag, 201);
   })
+  .get("/node/:nodeId", async (c) => {
+    const db = c.get("db");
+    const nodeId = c.req.param("nodeId");
+
+    const result = await db
+      .select({ id: tags.id, name: tags.name })
+      .from(nodeTags)
+      .innerJoin(tags, eq(nodeTags.tagId, tags.id))
+      .where(eq(nodeTags.nodeId, nodeId));
+
+    return c.json(result);
+  })
   .post("/node", requireAuth, zValidator("json", nodeTagSchema), async (c) => {
     const db = c.get("db");
     const { nodeId, tagId } = c.req.valid("json");
