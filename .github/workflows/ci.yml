@@ -21,7 +21,7 @@ jobs:
         run: bunx oxfmt --check packages/ backend/ frontend/
 
       - name: Lint
-        run: bunx oxlint --config .oxlintrc.json packages/ backend/ frontend/
+        run: bunx oxlint --config .oxlintrc.json --ignore-pattern 'frontend/.svelte-kit' packages/ backend/ frontend/
 
       - name: Typecheck packages
         run: |
@@ -33,7 +33,7 @@ jobs:
         run: bunx tsc --noEmit --project backend/tsconfig.json
 
       - name: Typecheck frontend
-        run: bunx tsc --noEmit --project frontend/tsconfig.json
+        run: cd frontend && bunx svelte-kit sync && bunx svelte-check --tsconfig ./tsconfig.json
 
       - uses: hashicorp/setup-terraform@v3
 

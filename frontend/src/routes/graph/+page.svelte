@@ -15,7 +15,7 @@
   import { NodeCreateDialog } from "$lib/components/node";
   import { TagList } from "$lib/components/tag";
   import type { NodeResponse, TagResponse } from "$lib/api/types";
-  import type { NodeMouseHandler } from "@xyflow/svelte";
+  import type { NodeEventWithPointer } from "@xyflow/svelte";
 
   type PageData = {
     nodes: NodeResponse[];
@@ -56,7 +56,9 @@
       data.session?.user?.id === selectedNode?.createdBy,
   );
 
-  const handleNodeClick: NodeMouseHandler = (_event, node) => {
+  const handleNodeClick: NodeEventWithPointer<MouseEvent | TouchEvent> = ({
+    node,
+  }) => {
     selectedNodeId = node.id;
     void fetchNodeTags(node.id);
   };
@@ -134,7 +136,7 @@
         nodes={flowNodes}
         edges={flowEdges}
         fitView
-        onNodeClick={handleNodeClick}
+        onnodeclick={handleNodeClick}
       >
         <Controls />
         <Background variant={BackgroundVariant.Dots} />

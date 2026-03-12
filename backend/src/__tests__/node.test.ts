@@ -46,9 +46,9 @@ describe("Node API", () => {
 
       const response = await app.request("/api/node/list?parentId=root");
       expect(response.status).toBe(200);
-      const body = await response.json();
+      const body = (await response.json()) as Record<string, unknown>[];
       expect(body).toHaveLength(1);
-      expect(body[0].id).toBe("child");
+      expect(body[0]?.id).toBe("child");
     });
   });
 
@@ -59,7 +59,7 @@ describe("Node API", () => {
 
       const response = await app.request("/api/node/n1");
       expect(response.status).toBe(200);
-      const body = await response.json();
+      const body = (await response.json()) as Record<string, unknown>;
       expect(body.title).toBe("Found");
     });
 
@@ -103,7 +103,7 @@ describe("Node API", () => {
       });
 
       expect(response.status).toBe(201);
-      const body = await response.json();
+      const body = (await response.json()) as Record<string, unknown>;
       expect(body.title).toBe("New Node");
       expect(body.createdBy).toBe(TEST_USER.id);
     });
@@ -137,7 +137,7 @@ describe("Node API", () => {
       });
 
       expect(response.status).toBe(200);
-      const body = await response.json();
+      const body = (await response.json()) as Record<string, unknown>;
       expect(body.title).toBe("Updated");
     });
 

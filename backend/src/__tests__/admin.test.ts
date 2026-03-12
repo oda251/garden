@@ -30,7 +30,7 @@ describe("Admin API", () => {
 
       const response = await app.request("/api/admin/users");
       expect(response.status).toBe(200);
-      const body = await response.json();
+      const body = (await response.json()) as Record<string, unknown>[];
       expect(body).toHaveLength(2);
       expect(body[0]).toHaveProperty("id");
       expect(body[0]).toHaveProperty("name");
