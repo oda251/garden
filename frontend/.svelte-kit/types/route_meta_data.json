@@ -1,0 +1,24 @@
+{
+  "/": [
+    "src/routes/+page.server.ts",
+    "src/routes/+layout.server.ts",
+    "src/routes/+layout.server.ts"
+  ],
+  "/admin": [
+    "src/routes/admin/+page.server.ts",
+    "src/routes/+layout.server.ts"
+  ],
+  "/article/[id]": [
+    "src/routes/article/[id]/+page.server.ts",
+    "src/routes/+layout.server.ts"
+  ],
+  "/graph": [
+    "src/routes/graph/+page.server.ts",
+    "src/routes/+layout.server.ts"
+  ],
+  "/login": ["src/routes/+layout.server.ts"],
+  "/timeline": [
+    "src/routes/timeline/+page.server.ts",
+    "src/routes/+layout.server.ts"
+  ]
+}

@@ -1,5 +1,6 @@
 export {
   NodeSelectSchema,
+  NodeInsertBaseSchema,
   NodeInsertSchema,
   isNonBlankTitle,
 } from "./nodes.js";

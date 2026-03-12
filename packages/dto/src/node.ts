@@ -1,15 +1,22 @@
 import { z } from "zod";
-import { NodeInsertSchema, NodeSelectSchema } from "@garden/schema";
+import {
+  NodeInsertBaseSchema,
+  NodeSelectSchema,
+  isNonBlankTitle,
+} from "@garden/schema";
 
-export const CreateNodeDto = NodeInsertSchema.pick({
+export const CreateNodeDto = NodeInsertBaseSchema.pick({
   title: true,
   content: true,
   parentId: true,
+}).refine((data) => isNonBlankTitle(data.title), {
+  message: "タイトルは空白のみにできません",
+  path: ["title"],
 });
 
 export type CreateNodeDto = z.infer<typeof CreateNodeDto>;
 
-export const UpdateNodeDto = NodeInsertSchema.pick({
+export const UpdateNodeDto = NodeInsertBaseSchema.pick({
   title: true,
   content: true,
 }).partial();

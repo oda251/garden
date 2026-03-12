@@ -1,4 +1,4 @@
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 export const ROLE = {
   ADMIN: "admin",
@@ -7,15 +7,15 @@ export const ROLE = {
 
 export type Role = (typeof ROLE)[keyof typeof ROLE];
 
-export const users = sqliteTable("users", {
+export const users = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: text("email_verified", { mode: "text" })
+  emailVerified: integer("email_verified", { mode: "boolean" })
     .notNull()
-    .default("false"),
+    .default(false),
   image: text("image"),
   role: text("role").notNull().default(ROLE.USER).$type<Role>(),
-  createdAt: text("created_at").notNull(),
-  updatedAt: text("updated_at").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });

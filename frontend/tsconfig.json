@@ -1,16 +1,18 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "dist",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": ["@cloudflare/workers-types"],
-    "jsx": "react-jsx",
-    "declaration": false,
-    "declarationMap": false,
-    "paths": {
-      "~/*": ["./src/*"]
-    }
-  },
-  "include": ["src", "react-router.config.ts"]
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "isolatedModules": true,
+    "types": ["@cloudflare/workers-types"]
+  }
 }

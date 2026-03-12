@@ -1,24 +1,36 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { trpcServer } from "@hono/trpc-server";
-import { appRouter } from "./router/index.js";
-import type { TRPCContext } from "./trpc.js";
-import type { AppEnv } from "./env.js";
+import { apiRouter } from "./router/index.js";
+import {
+  errorHandler,
+  dbMiddleware,
+  authSetupMiddleware,
+  secureHeadersMiddleware,
+  csrfMiddleware,
+} from "./middleware/index.js";
+import { authMiddleware } from "./auth/index.js";
+import type { AppEnv, AppVariables } from "./env.js";
 
-const app = new Hono<{ Bindings: AppEnv }>();
+const app = new Hono<{ Bindings: AppEnv; Variables: AppVariables }>();
 
+app.onError(errorHandler);
+
+app.use("*", secureHeadersMiddleware);
 app.use("*", cors());
+app.use("*", csrfMiddleware);
+app.use("*", dbMiddleware);
+app.use("*", authSetupMiddleware);
 
-app.use(
-  "/trpc/*",
-  trpcServer({
-    router: appRouter,
-    createContext: (_opts, c): TRPCContext => ({
-      env: c.env,
-    }),
-  }),
-);
+app.on(["POST", "GET"], "/api/auth/**", (c) => {
+  const auth = c.get("auth");
+  return auth.handler(c.req.raw);
+});
+
+app.use("/api/*", authMiddleware);
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
+const routes = app.route("/api", apiRouter);
+
 export default app;
+export type AppRoutes = typeof routes;

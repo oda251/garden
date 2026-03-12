@@ -1,13 +1,19 @@
 pre-commit:
   commands:
     format:
-      glob: "*.{ts,tsx,js,jsx,json}"
+      glob: "*.{ts,js,json}"
       run: bunx oxfmt --write {staged_files}
       stage_fixed: true
     lint:
-      glob: "*.{ts,tsx,js,jsx}"
-      run: bunx oxlint --config .oxlintrc.json {staged_files}
+      glob: "*.{ts,js,svelte}"
+      exclude: ".svelte-kit/"
+      run: bunx oxlint --config .oxlintrc.json --ignore-pattern '**/.svelte-kit/**' {staged_files}
+    svelte-format:
+      root: "frontend/"
+      glob: "*.svelte"
+      run: bunx prettier --write {staged_files}
+      stage_fixed: true
     terraform-fmt:
       glob: "*.tf"
-      run: terraform fmt -recursive infra/
+      run: terraform fmt {staged_files}
       stage_fixed: true

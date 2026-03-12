@@ -5,7 +5,9 @@ export const isNonBlankTitle = (title: string) => title.trim().length > 0;
 
 export const NodeSelectSchema = createSelectSchema(nodes);
 
-export const NodeInsertSchema = createInsertSchema(nodes).refine(
+export const NodeInsertBaseSchema = createInsertSchema(nodes);
+
+export const NodeInsertSchema = NodeInsertBaseSchema.refine(
   (data) => isNonBlankTitle(data.title),
   { message: "タイトルは空白のみにできません", path: ["title"] },
 );

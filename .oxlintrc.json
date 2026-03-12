@@ -18,6 +18,21 @@
     "no-var": "error",
     "prefer-const": "error",
     "no-console": "warn",
-    "eqeqeq": "error"
-  }
+    "eqeqeq": "error",
+    "import/no-unassigned-import": "off"
+  },
+  "overrides": [
+    {
+      "files": ["frontend/**/*.{ts,svelte}"],
+      "rules": {
+        "import/no-relative-parent-imports": "error"
+      }
+    },
+    {
+      "files": ["frontend/**/*.svelte"],
+      "rules": {
+        "prefer-const": "off"
+      }
+    }
+  ]
 }
