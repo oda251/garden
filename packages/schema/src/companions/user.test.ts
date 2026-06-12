@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { User } from "./user.js";
 import { ROLE } from "../tables/users.js";
 
-describe("User companion", () => {
+describe("User", () => {
   const baseUser = {
     id: "user-1",
     name: "Test User",

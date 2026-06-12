@@ -20,7 +20,7 @@
   const dateFrom = $derived(page.url.searchParams.get("from") ?? "");
   const dateTo = $derived(page.url.searchParams.get("to") ?? "");
 
-  const filteredNodes = $derived(() => {
+  const filteredNodes = $derived.by(() => {
     let result = [...data.nodes];
 
     if (data.tagIds.length > 0) {
@@ -62,8 +62,8 @@
     return result;
   });
 
-  const groupedNodes = $derived(() => {
-    const nodes = filteredNodes();
+  const groupedNodes = $derived.by(() => {
+    const nodes = filteredNodes;
     if (groupBy !== "parent") return null;
 
     const groups = new Map<string, { title: string; nodes: NodeResponse[] }>();
@@ -89,7 +89,7 @@
     return { groups: Array.from(groups.entries()), orphans };
   });
 
-  const formatDate = (dateStr: string) => {
+  const formatDateTime = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("ja-JP", {
       year: "numeric",
@@ -113,18 +113,18 @@
   <div class="flex items-center justify-between">
     <h2 class="text-xl font-bold">タイムライン</h2>
     <span class="text-muted-foreground text-sm">
-      {filteredNodes().length} 件
+      {filteredNodes.length} 件
     </span>
   </div>
 
   <TimelineFilter tags={data.tags} rootNodes={data.rootNodes} />
 
-  {#if filteredNodes().length === 0}
+  {#if filteredNodes.length === 0}
     <p class="text-muted-foreground py-8 text-center">
       条件に一致するノードがありません。
     </p>
-  {:else if groupBy === "parent" && groupedNodes()}
-    {@const grouped = groupedNodes()}
+  {:else if groupBy === "parent" && groupedNodes}
+    {@const grouped = groupedNodes}
     {#if grouped}
       {#if grouped.orphans.length > 0}
         <div class="space-y-3">
@@ -141,7 +141,7 @@
                 {node.content || "(内容なし)"}
               </p>
               <p class="text-muted-foreground mt-2 text-xs">
-                {getDateLabel()}: {formatDate(getDisplayDate(node))}
+                {getDateLabel()}: {formatDateTime(getDisplayDate(node))}
               </p>
             </a>
           {/each}
@@ -163,7 +163,7 @@
                 {node.content || "(内容なし)"}
               </p>
               <p class="text-muted-foreground mt-2 text-xs">
-                {getDateLabel()}: {formatDate(getDisplayDate(node))}
+                {getDateLabel()}: {formatDateTime(getDisplayDate(node))}
               </p>
             </a>
           {/each}
@@ -172,7 +172,7 @@
     {/if}
   {:else}
     <div class="space-y-3">
-      {#each filteredNodes() as node (node.id)}
+      {#each filteredNodes as node (node.id)}
         <a
           href="/article/{node.id}"
           class="border-border hover:bg-accent block rounded-lg border p-4 transition-colors"
@@ -182,7 +182,7 @@
             {node.content || "(内容なし)"}
           </p>
           <p class="text-muted-foreground mt-2 text-xs">
-            {getDateLabel()}: {formatDate(getDisplayDate(node))}
+            {getDateLabel()}: {formatDateTime(getDisplayDate(node))}
           </p>
         </a>
       {/each}

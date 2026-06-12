@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { Node } from "./node.js";
 
-describe("Node companion", () => {
+describe("Node", () => {
   const baseNode = {
     id: "01ARZ3NDEKTSV4RRFFQ69G5FAV",
     title: "test",

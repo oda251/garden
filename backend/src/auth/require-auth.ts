@@ -1,4 +1,5 @@
 import { createMiddleware } from "hono/factory";
+import { AppError } from "../domain/app-error.js";
 import type { AppEnv, AppVariables } from "../env.js";
 import type { AuthUser } from "./types.js";
 
@@ -10,7 +11,8 @@ type RequireAuthEnv = {
 export const requireAuth = createMiddleware<RequireAuthEnv>(async (c, next) => {
   const user = c.get("user");
   if (!user) {
-    return c.json({ code: "UNAUTHORIZED", message: "Unauthorized" }, 401);
+    const { status, body } = AppError.toResponse(AppError.unauthorized());
+    return c.json(body, status);
   }
   await next();
 });

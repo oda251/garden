@@ -2,7 +2,7 @@ import { z } from "zod";
 import { UserSelectSchema, RoleSchema } from "@garden/schema";
 
 export const UpdateUserRoleDto = z.object({
-  userId: z.string(),
+  userId: z.string().min(1),
   role: RoleSchema,
 });
 

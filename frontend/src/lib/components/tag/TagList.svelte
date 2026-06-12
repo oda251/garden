@@ -3,14 +3,10 @@
   import { toast } from "svelte-sonner";
   import { invalidateAll } from "$app/navigation";
   import X from "@lucide/svelte/icons/x";
-
-  type Tag = {
-    id: string;
-    name: string;
-  };
+  import type { TagResponse } from "$lib/api/types";
 
   type Props = {
-    tags: Tag[];
+    tags: TagResponse[];
   };
 
   const { tags }: Props = $props();

@@ -10,14 +10,14 @@ Claude Code のカスタムエージェントの設計を管理する。
 
 ## エージェント
 
-| 名前 | 役割 | 参照 |
-|------|------|------|
-| pm | ユーザーとの窓口。タスクの規模を判断し planner / tl に振り分け | `docs/SPEC.md` |
-| planner | タスクを sub-issues に分解 | `docs/SPEC.md` + `docs/ARCHITECTURE.md` |
-| tl | PR を起点に実装ワークフローを管理 | — |
-| coder | 規約に従った実装 + クリーンアップ。レビュー指摘時は PR コメントを読んで修正 | `docs/ARCHITECTURE.md` + `docs/CODING_GUIDELINES.md` + PR |
-| reviewer | 規約準拠のレビュー。結果を PR review として投稿 | `docs/ARCHITECTURE.md` + `docs/CODING_GUIDELINES.md` + PR |
-| qa | ビルド・テスト実行による動作検証 | — |
+| 名前     | 役割                                                                        | 参照                                                      |
+| -------- | --------------------------------------------------------------------------- | --------------------------------------------------------- |
+| pm       | ユーザーとの窓口。タスクの規模を判断し planner / tl に振り分け              | `docs/SPEC.md`                                            |
+| planner  | タスクを sub-issues に分解                                                  | `docs/SPEC.md` + `docs/ARCHITECTURE.md`                   |
+| tl       | PR を起点に実装ワークフローを管理                                           | —                                                         |
+| coder    | 規約に従った実装 + クリーンアップ。レビュー指摘時は PR コメントを読んで修正 | `docs/ARCHITECTURE.md` + `docs/CODING_GUIDELINES.md` + PR |
+| reviewer | 規約準拠のレビュー。結果を PR review として投稿                             | `docs/ARCHITECTURE.md` + `docs/CODING_GUIDELINES.md` + PR |
+| qa       | ビルド・テスト実行による動作検証                                            | —                                                         |
 
 ## ワークフロー
 

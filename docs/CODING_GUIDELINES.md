@@ -14,17 +14,17 @@
 
 ## 命名規則
 
-| 対象 | スタイル | 例 |
-|------|----------|-----|
-| ファイル名 | kebab-case | `node-service.ts` |
-| 型 | PascalCase | `NodeService`, `CreateNodeDto` |
-| 関数 / 変数 | camelCase | `findNode`, `nodeCount` |
-| 定数 | UPPER_SNAKE_CASE | `MAX_DEPTH` |
-| Zodスキーマ | PascalCase + `Schema` | `NodeSchema` |
-| React コンポーネント | PascalCase | `GraphView` |
-| React hooks | `use` プレフィックス | `useNodes` |
-| イベントハンドラー | `handle` プレフィックス | `handleNodeClick` |
-| boolean変数 | `is` / `has` / `can` プレフィックス | `isRoot` |
+| 対象                 | スタイル                            | 例                             |
+| -------------------- | ----------------------------------- | ------------------------------ |
+| ファイル名           | kebab-case                          | `node-service.ts`              |
+| 型                   | PascalCase                          | `NodeService`, `CreateNodeDto` |
+| 関数 / 変数          | camelCase                           | `findNode`, `nodeCount`        |
+| 定数                 | UPPER_SNAKE_CASE                    | `MAX_DEPTH`                    |
+| Zodスキーマ          | PascalCase + `Schema`               | `NodeSchema`                   |
+| React コンポーネント | PascalCase                          | `GraphView`                    |
+| React hooks          | `use` プレフィックス                | `useNodes`                     |
+| イベントハンドラー   | `handle` プレフィックス             | `handleNodeClick`              |
+| boolean変数          | `is` / `has` / `can` プレフィックス | `isRoot`                       |
 
 ---
 
@@ -55,12 +55,12 @@ Cloudflare Cache API でD1クエリ結果をエッジキャッシュ (TTL は Ca
 
 ### 状態管理の使い分け
 
-| 状態の種類 | 管理方法 |
-|-----------|---------|
-| サーバーデータ | tRPC (TanStack Query) |
-| URL で表現できる状態 (フィルタ、ソート等) | URL params |
-| ユーザー設定 | cookies |
-| グラフ操作 (ズーム/パン/ドラッグ) | Zustand |
+| 状態の種類                                | 管理方法              |
+| ----------------------------------------- | --------------------- |
+| サーバーデータ                            | tRPC (TanStack Query) |
+| URL で表現できる状態 (フィルタ、ソート等) | URL params            |
+| ユーザー設定                              | cookies               |
+| グラフ操作 (ズーム/パン/ドラッグ)         | Zustand               |
 
 ### 楽観的更新
 

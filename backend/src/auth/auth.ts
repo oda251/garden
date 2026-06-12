@@ -16,11 +16,32 @@ type AuthConfig = {
   trustedOrigins: string[];
 };
 
-export const createAuth = (config: AuthConfig) => {
-  const adminEmailList = config.adminEmails
+const parseAdminEmails = (raw: string): string[] =>
+  raw
     .split(",")
     .map((email) => email.trim())
     .filter((email) => email.length > 0);
+
+const createAdminPromotionHook = (
+  config: AuthConfig,
+  adminEmailList: string[],
+) => ({
+  user: {
+    create: {
+      after: async (user: { id: string; email: string }) => {
+        if (adminEmailList.includes(user.email)) {
+          await config.db
+            .update(users)
+            .set({ role: ROLE.ADMIN })
+            .where(eq(users.id, user.id));
+        }
+      },
+    },
+  },
+});
+
+export const createAuth = (config: AuthConfig) => {
+  const adminEmailList = parseAdminEmails(config.adminEmails);
 
   return betterAuth({
     baseURL: config.baseURL,
@@ -55,22 +76,7 @@ export const createAuth = (config: AuthConfig) => {
       },
     },
     trustedOrigins: config.trustedOrigins,
-    databaseHooks: {
-      user: {
-        create: {
-          after: async (user) => {
-            const shouldBeAdmin = adminEmailList.includes(user.email);
-
-            if (shouldBeAdmin) {
-              await config.db
-                .update(users)
-                .set({ role: ROLE.ADMIN })
-                .where(eq(users.id, user.id));
-            }
-          },
-        },
-      },
-    },
+    databaseHooks: createAdminPromotionHook(config, adminEmailList),
   });
 };
 

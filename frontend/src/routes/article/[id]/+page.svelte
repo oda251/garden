@@ -31,12 +31,7 @@
     void updateRenderedContent();
   });
 
-  const canEdit = $derived(
-    data.session?.user?.role === "admin" ||
-      data.session?.user?.id === data.node.createdBy,
-  );
-
-  const canDelete = $derived(
+  const canModify = $derived(
     data.session?.user?.role === "admin" ||
       data.session?.user?.id === data.node.createdBy,
   );
@@ -68,28 +63,24 @@
         </p>
       </div>
 
-      {#if canEdit || canDelete}
+      {#if canModify}
         <div class="flex gap-1">
-          {#if canEdit}
-            <Button
-              variant="ghost"
-              size="icon"
-              onclick={() => (isEditing = true)}
-            >
-              <Pencil class="h-4 w-4" />
-              <span class="sr-only">編集</span>
-            </Button>
-          {/if}
-          {#if canDelete}
-            <Button
-              variant="ghost"
-              size="icon"
-              onclick={() => (isDeleteConfirming = true)}
-            >
-              <Trash2 class="h-4 w-4" />
-              <span class="sr-only">削除</span>
-            </Button>
-          {/if}
+          <Button
+            variant="ghost"
+            size="icon"
+            onclick={() => (isEditing = true)}
+          >
+            <Pencil class="h-4 w-4" />
+            <span class="sr-only">編集</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onclick={() => (isDeleteConfirming = true)}
+          >
+            <Trash2 class="h-4 w-4" />
+            <span class="sr-only">削除</span>
+          </Button>
         </div>
       {/if}
     </header>

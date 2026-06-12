@@ -19,7 +19,17 @@ export type CreateNodeDto = z.infer<typeof CreateNodeDto>;
 export const UpdateNodeDto = NodeInsertBaseSchema.pick({
   title: true,
   content: true,
-}).partial();
+})
+  .partial()
+  .superRefine((data, ctx) => {
+    if (data.title !== undefined && !isNonBlankTitle(data.title)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "タイトルは空白のみにできません",
+        path: ["title"],
+      });
+    }
+  });
 
 export type UpdateNodeDto = z.infer<typeof UpdateNodeDto>;
 

@@ -1,5 +1,6 @@
 import { createMiddleware } from "hono/factory";
 import { ROLE } from "@garden/schema";
+import { AppError } from "../domain/app-error.js";
 import type { AppEnv, AppVariables } from "../env.js";
 import type { AuthUser } from "./types.js";
 
@@ -12,7 +13,8 @@ export const requireAdmin = createMiddleware<RequireAdminEnv>(
   async (c, next) => {
     const user = c.get("user");
     if (!user || user.role !== ROLE.ADMIN) {
-      return c.json({ code: "FORBIDDEN", message: "Forbidden" }, 403);
+      const { status, body } = AppError.toResponse(AppError.forbidden());
+      return c.json(body, status);
     }
     await next();
   },

@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { users } from "@garden/schema";
 import { UpdateUserRoleDto } from "@garden/dto";
 import { requireAuth, requireAdmin } from "../auth/index.js";
+import { AppError } from "../domain/app-error.js";
 import type { AppEnv, AppVariables } from "../env.js";
 
 type AdminEnv = {
@@ -38,7 +39,9 @@ export const adminRouter = new Hono<AdminEnv>()
       .limit(1);
 
     if (!existing[0]) {
-      return c.json({ code: "NOT_FOUND", message: "User not found" }, 404);
+      const { status: notFoundStatus, body: notFoundBody } =
+        AppError.toResponse(AppError.notFound("User not found"));
+      return c.json(notFoundBody, notFoundStatus);
     }
 
     await db.update(users).set({ role }).where(eq(users.id, userId));

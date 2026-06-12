@@ -1,12 +1,14 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { eq, and } from "drizzle-orm";
+import { eq, and, type SQL } from "drizzle-orm";
 import { ulid } from "ulid";
 import { nodes, ROLE } from "@garden/schema";
 import { CreateNodeDto, UpdateNodeDto } from "@garden/dto";
 import { requireAuth } from "../auth/index.js";
+import { AppError } from "../domain/app-error.js";
 import type { AppEnv, AppVariables } from "../env.js";
+import type { Context } from "hono";
 
 type NodeEnv = {
   Bindings: AppEnv;
@@ -15,25 +17,40 @@ type NodeEnv = {
 
 const listQuerySchema = z.object({
   parentId: z.string().optional(),
-  tagId: z.string().optional(),
 });
+
+const isOwnerOrAdmin = (
+  nodeCreatedBy: string | null,
+  userId: string,
+  userRole: string,
+): boolean => nodeCreatedBy === userId || userRole === ROLE.ADMIN;
+
+const respondNotFound = (c: Context, message: string) => {
+  const { status, body } = AppError.toResponse(AppError.notFound(message));
+  return c.json(body, status);
+};
+
+const respondForbidden = (c: Context) => {
+  const { status, body } = AppError.toResponse(AppError.forbidden());
+  return c.json(body, status);
+};
 
 export const nodeRouter = new Hono<NodeEnv>()
   .get("/list", zValidator("query", listQuerySchema), async (c) => {
     const db = c.get("db");
     const { parentId } = c.req.valid("query");
 
-    const conditions = [];
+    const whereConditions: SQL[] = [];
     if (parentId !== undefined) {
-      conditions.push(eq(nodes.parentId, parentId));
+      whereConditions.push(eq(nodes.parentId, parentId));
     }
 
     const result =
-      conditions.length > 0
+      whereConditions.length > 0
         ? await db
             .select()
             .from(nodes)
-            .where(and(...conditions))
+            .where(and(...whereConditions))
         : await db.select().from(nodes);
 
     return c.json(result);
@@ -50,7 +67,7 @@ export const nodeRouter = new Hono<NodeEnv>()
 
     const node = result[0];
     if (!node) {
-      return c.json({ code: "NOT_FOUND", message: "Node not found" }, 404);
+      return respondNotFound(c, "Node not found");
     }
 
     return c.json(node);
@@ -100,11 +117,11 @@ export const nodeRouter = new Hono<NodeEnv>()
 
     const node = existing[0];
     if (!node) {
-      return c.json({ code: "NOT_FOUND", message: "Node not found" }, 404);
+      return respondNotFound(c, "Node not found");
     }
 
-    if (node.createdBy !== user.id && user.role !== ROLE.ADMIN) {
-      return c.json({ code: "FORBIDDEN", message: "Forbidden" }, 403);
+    if (!isOwnerOrAdmin(node.createdBy, user.id, user.role)) {
+      return respondForbidden(c);
     }
 
     const updateData = {
@@ -120,7 +137,12 @@ export const nodeRouter = new Hono<NodeEnv>()
       .where(eq(nodes.id, nodeId))
       .limit(1);
 
-    return c.json(updated[0]);
+    const updatedNode = updated[0];
+    if (!updatedNode) {
+      return respondNotFound(c, "Node not found");
+    }
+
+    return c.json(updatedNode);
   })
   .delete("/:id", requireAuth, async (c) => {
     const db = c.get("db");
@@ -135,11 +157,11 @@ export const nodeRouter = new Hono<NodeEnv>()
 
     const node = existing[0];
     if (!node) {
-      return c.json({ code: "NOT_FOUND", message: "Node not found" }, 404);
+      return respondNotFound(c, "Node not found");
     }
 
-    if (node.createdBy !== user.id && user.role !== ROLE.ADMIN) {
-      return c.json({ code: "FORBIDDEN", message: "Forbidden" }, 403);
+    if (!isOwnerOrAdmin(node.createdBy, user.id, user.role)) {
+      return respondForbidden(c);
     }
 
     await db.delete(nodes).where(eq(nodes.id, nodeId));

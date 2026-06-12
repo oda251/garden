@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { createMockNode, createMockUser, createMockTag } from "./index.js";
+import {
+  NodeInsertBaseSchema,
+  UserInsertSchema,
+  TagInsertSchema,
+} from "@garden/schema";
 
 describe("createMockNode", () => {
   it("title プロパティを持つオブジェクトを返す", () => {
@@ -17,6 +22,12 @@ describe("createMockNode", () => {
     const node = createMockNode();
     expect(node).toHaveProperty("updatedAt");
   });
+
+  it("NodeInsertBaseSchema のバリデーションを通過する", () => {
+    const node = createMockNode();
+    const result = NodeInsertBaseSchema.safeParse(node);
+    expect(result.success).toBe(true);
+  });
 });
 
 describe("createMockUser", () => {
@@ -31,6 +42,12 @@ describe("createMockUser", () => {
     expect(user).toHaveProperty("email");
     expect(typeof user.email).toBe("string");
   });
+
+  it("UserInsertSchema のバリデーションを通過する", () => {
+    const user = createMockUser();
+    const result = UserInsertSchema.safeParse(user);
+    expect(result.success).toBe(true);
+  });
 });
 
 describe("createMockTag", () => {
@@ -38,5 +55,11 @@ describe("createMockTag", () => {
     const tag = createMockTag();
     expect(tag).toHaveProperty("name");
     expect(typeof tag.name).toBe("string");
+  });
+
+  it("TagInsertSchema のバリデーションを通過する", () => {
+    const tag = createMockTag();
+    const result = TagInsertSchema.safeParse(tag);
+    expect(result.success).toBe(true);
   });
 });

@@ -1,13 +1,5 @@
 import type { LayoutServerLoad } from "./$types";
-
-type SessionData = {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-  };
-} | null;
+import type { SessionData } from "$lib/api/types";
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
   const response = await fetch("/api/auth/get-session", {

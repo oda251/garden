@@ -19,7 +19,8 @@
     "prefer-const": "error",
     "no-console": "warn",
     "eqeqeq": "error",
-    "import/no-unassigned-import": "off"
+    "import/no-unassigned-import": "off",
+    "import/max-dependencies": "off"
   },
   "overrides": [
     {
@@ -32,6 +33,12 @@
       "files": ["frontend/**/*.svelte"],
       "rules": {
         "prefer-const": "off"
+      }
+    },
+    {
+      "files": ["**/__tests__/**", "**/*.test.ts"],
+      "rules": {
+        "max-lines-per-function": "off"
       }
     }
   ]

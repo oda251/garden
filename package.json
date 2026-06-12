@@ -7,10 +7,15 @@
     "frontend"
   ],
   "scripts": {
+    "dev": "bun run --filter '@garden/backend' dev & bun run --filter '@garden/frontend' dev",
+    "dev:backend": "bun run --filter '@garden/backend' dev",
+    "dev:frontend": "bun run --filter '@garden/frontend' dev",
+    "build": "bun run --filter '@garden/frontend' build",
     "prepare": "lefthook install",
     "lint": "oxlint --config .oxlintrc.json --ignore-pattern 'frontend/.svelte-kit/**' packages/ backend/ frontend/src/",
-    "format": "oxfmt --write .",
-    "format:check": "oxfmt --check .",
+    "format": "oxfmt --write 'packages/' 'backend/' 'frontend/src/' 'frontend/e2e/' 'frontend/*.ts' 'frontend/*.js' 'frontend/*.json' && bun run --filter '@garden/frontend' format:svelte",
+    "format:check": "oxfmt --check 'packages/' 'backend/' 'frontend/src/' 'frontend/e2e/' 'frontend/*.ts' 'frontend/*.js' 'frontend/*.json' && bun run --filter '@garden/frontend' format:svelte:check",
+    "typecheck": "tsc --noEmit --project packages/schema/tsconfig.json && tsc --noEmit --project packages/dto/tsconfig.json && tsc --noEmit --project packages/mock/tsconfig.json && tsc --noEmit --project backend/tsconfig.json && cd frontend && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest"
   },

@@ -56,4 +56,16 @@ describe("NodeInsertSchema", () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it("content を省略してもバリデーションを通過する", () => {
+    const { content: _, ...withoutContent } = validNode;
+    const result = NodeInsertSchema.safeParse(withoutContent);
+    expect(result.success).toBe(true);
+  });
+
+  it("title が未定義だと拒否する", () => {
+    const { title: _, ...withoutTitle } = validNode;
+    const result = NodeInsertSchema.safeParse(withoutTitle);
+    expect(result.success).toBe(false);
+  });
 });

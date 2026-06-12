@@ -8,6 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "format:svelte": "prettier --write 'src/**/*.svelte'",
+    "format:svelte:check": "prettier --check 'src/**/*.svelte'",
     "story:dev": "histoire dev",
     "story:build": "histoire build",
     "test:e2e": "playwright test",

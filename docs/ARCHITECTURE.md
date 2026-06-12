@@ -31,9 +31,9 @@
 
 ### 構成
 
-| 種別 | フレームワーク | 対象 | 内容 |
-|------|--------------|------|------|
-| tRPC プロシージャテスト | vitest + Testcontainers (SQLite) | `backend/router/` | `createCaller` でプロシージャを呼び出し、実 DB で検証。usecases・adapters・Drizzle クエリを一括カバー |
-| ユニットテスト | vitest | `backend/middleware/` | 認証・CORS 等のミドルウェア単体検証 |
-| ユニットテスト | vitest | `packages/schema/` | コンパニオン (`Node.isRoot()` 等) + バリデーションロジック |
-| Playwright + MSW | Playwright | `frontend/` | UI の振る舞い・ユーザーフロー。バックエンド通信は MSW でモック |
+| 種別                    | フレームワーク                   | 対象                  | 内容                                                                                                  |
+| ----------------------- | -------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------- |
+| tRPC プロシージャテスト | vitest + Testcontainers (SQLite) | `backend/router/`     | `createCaller` でプロシージャを呼び出し、実 DB で検証。usecases・adapters・Drizzle クエリを一括カバー |
+| ユニットテスト          | vitest                           | `backend/middleware/` | 認証・CORS 等のミドルウェア単体検証                                                                   |
+| ユニットテスト          | vitest                           | `packages/schema/`    | コンパニオン (`Node.isRoot()` 等) + バリデーションロジック                                            |
+| Playwright + MSW        | Playwright                       | `frontend/`           | UI の振る舞い・ユーザーフロー。バックエンド通信は MSW でモック                                        |

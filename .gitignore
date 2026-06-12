@@ -7,6 +7,9 @@ dist/
 .wrangler/
 .dev.vars
 
+# SvelteKit
+.svelte-kit/
+
 # Playwright
 /frontend/test-results/
 /frontend/playwright-report/

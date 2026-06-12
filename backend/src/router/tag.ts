@@ -6,6 +6,7 @@ import { ulid } from "ulid";
 import { tags, nodeTags } from "@garden/schema";
 import { CreateTagDto } from "@garden/dto";
 import { requireAuth } from "../auth/index.js";
+import { AppError } from "../domain/app-error.js";
 import type { AppEnv, AppVariables } from "../env.js";
 
 type TagEnv = {
@@ -83,7 +84,9 @@ export const tagRouter = new Hono<TagEnv>()
       .limit(1);
 
     if (!existing[0]) {
-      return c.json({ code: "NOT_FOUND", message: "Tag not found" }, 404);
+      const { status: notFoundStatus, body: notFoundBody } =
+        AppError.toResponse(AppError.notFound("Tag not found"));
+      return c.json(notFoundBody, notFoundStatus);
     }
 
     await db.delete(tags).where(eq(tags.id, tagId));

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CreateNodeDto, UpdateNodeDto } from "./node.js";
+import { CreateNodeDto, UpdateNodeDto, NodeResponseDto } from "./node.js";
 
 describe("CreateNodeDto", () => {
   it("title + content + parentId を受け付ける", () => {
@@ -52,5 +52,37 @@ describe("UpdateNodeDto", () => {
   it("空オブジェクトを受け付ける (全フィールドがオプショナル)", () => {
     const result = UpdateNodeDto.safeParse({});
     expect(result.success).toBe(true);
+  });
+
+  it("有効な title を受け付ける", () => {
+    const result = UpdateNodeDto.safeParse({ title: "valid" });
+    expect(result.success).toBe(true);
+  });
+
+  it("空白のみの title を拒否する", () => {
+    const result = UpdateNodeDto.safeParse({ title: "   " });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("NodeResponseDto", () => {
+  it("有効なレスポンスデータをパースできる", () => {
+    const result = NodeResponseDto.safeParse({
+      id: "node-1",
+      parentId: null,
+      title: "テストノード",
+      content: "内容",
+      createdBy: "user-1",
+      createdAt: "2026-01-01T00:00:00Z",
+      updatedAt: "2026-01-01T00:00:00Z",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("必須フィールドが欠けていると拒否する", () => {
+    const result = NodeResponseDto.safeParse({
+      id: "node-1",
+    });
+    expect(result.success).toBe(false);
   });
 });

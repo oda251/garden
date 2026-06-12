@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CreateTagDto } from "./tag.js";
+import { CreateTagDto, TagResponseDto } from "./tag.js";
 
 describe("CreateTagDto", () => {
   it("有効な name を受け付ける", () => {
@@ -18,5 +18,20 @@ describe("CreateTagDto", () => {
       extra: "ignored",
     });
     expect(result.success).toBe(true);
+  });
+});
+
+describe("TagResponseDto", () => {
+  it("有効なレスポンスデータをパースできる", () => {
+    const result = TagResponseDto.safeParse({
+      id: "tag-1",
+      name: "typescript",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("必須フィールドが欠けていると拒否する", () => {
+    const result = TagResponseDto.safeParse({});
+    expect(result.success).toBe(false);
   });
 });
